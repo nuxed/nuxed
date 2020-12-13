@@ -1,0 +1,51 @@
+{
+    "name": "nuxed/nuxed",
+    "description": "Nuxed Framework",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "azjezz",
+            "email": "azjezz@protonmail.com"
+        },
+        {
+            "name": "Nuxed Community",
+            "homepage": "https://github.com/nuxed/translation/graphs/contributors"
+        }
+    ],
+    "keywords": [
+        "hhvm",
+        "hack",
+        "async",
+        "http",
+        "nuxed",
+        "framework"
+    ],
+    "require": {
+        "hhvm": "~4.85.0",
+        "hhvm/hsl": "^4.41",
+        "hhvm/hsl-experimental": "^4.66.0",
+        "hhvm/type-assert": "^4.1.2",
+        "facebook/definition-finder": "^2.14",
+        "facebook/hack-router": "^0.19.7",
+        "azjezz/http-normalizer": "^1.1"
+    },
+    "require-dev": {
+        "facebook/difflib": "^1.1.1",
+        "facebook/fbexpect": "^2.7.7",
+        "facebook/hh-clilib": "^2.5.2",
+        "hhvm/hacktest": "^2.0",
+        "hhvm/hhast": "^4.82.2",
+        "hhvm/hhvm-autoload": "^3.1.6"
+    },
+    "scripts": {
+        "check": [
+            "@type-check",
+            "@lint",
+            "@test"
+        ],
+        "lint": "hhast-lint -v src/",
+        "test": "hacktest tests/",
+        "type-check": "hh_client src/"
+    }
+}

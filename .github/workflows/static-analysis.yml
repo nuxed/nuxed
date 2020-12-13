@@ -1,0 +1,42 @@
+name: "static analysis"
+
+on: ["pull_request", "push"]
+
+jobs:
+  static-analysis:
+    name: "static analysis"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['macos-latest', 'ubuntu-latest']
+        hhvm: ['4.83', '4.84']
+        dependencies: ['lowest', 'highest', 'locked']
+        experimental: [false]
+
+        include:
+          - { hhvm: 'nightly', os: 'ubuntu-latest', dependencies: 'lowest' , composer-options: '--ignore-platform-req hhvm', experimental: true }
+          - { hhvm: 'nightly', os: 'ubuntu-latest', dependencies: 'highest', composer-options: '--ignore-platform-req hhvm', experimental: true }
+
+    steps:
+      - name: "checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "installing hhvm"
+        uses: "azjezz/setup-hhvm@v1"
+        with:
+          version: ${{ matrix.hhvm }}
+
+      - name: "installing dependencies"
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: "${{ matrix.composer-options }}"
+
+      - name: "dumping autoloader"
+        run: "hhvm vendor/bin/hh-autoload"
+
+      - name: "running static analysis"
+        continue-on-error: ${{ matrix.experimental }}
+        run: "hh_client"

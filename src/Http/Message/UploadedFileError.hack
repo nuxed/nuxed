@@ -1,0 +1,12 @@
+namespace Nuxed\Http\Message;
+
+enum UploadedFileError: int as int {
+  NONE = 0;
+  EXCEEDS_MAX_SIZE = 1;
+  EXCEEDS_MAX_FORM_SIZE = 2;
+  INCOMPLETE = 3;
+  NO_FILE = 4;
+  TEMPORARY_DIRECTORY_NOT_SPECIFIED = 5;
+  TEMPORARY_DIRECTORY_NOT_WRITABLE = 6;
+  CANCELED_BY_EXTENSION = 7;
+}

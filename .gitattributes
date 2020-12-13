@@ -1,0 +1,4 @@
+*.hack linguist-language=Hack
+
+/tests export-ignore
+composer.lock expoert-ignore

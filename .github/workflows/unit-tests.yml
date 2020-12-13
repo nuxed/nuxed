@@ -1,0 +1,42 @@
+name: "unit tests"
+
+on: ["pull_request", "push"]
+
+jobs:
+  unit-tests:
+    name: "unit tests"
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: ['macos-latest', 'ubuntu-latest']
+        hhvm: ['4.83', '4.84']
+        dependencies: ['lowest', 'highest', 'locked']
+        experimental: [false]
+
+        include:
+          - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'lowest' , experimental: true, composer-options: '--ignore-platform-req hhvm' }
+          - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'highest', experimental: true, composer-options: '--ignore-platform-req hhvm' }
+
+    steps:
+      - name: "checkout"
+        uses: "actions/checkout@v2"
+
+      - name: "installing hhvm"
+        uses: "azjezz/setup-hhvm@v1"
+        with:
+          version: ${{ matrix.hhvm }}
+
+      - name: "installing dependencies"
+        uses: "ramsey/composer-install@v1"
+        with:
+          dependency-versions: ${{ matrix.dependencies }}
+          composer-options: "${{ matrix.composer-options }}"
+
+      - name: "dumping autoloader"
+        run: "hhvm vendor/bin/hh-autoload"
+
+      - name: "running unit tests"
+        continue-on-error: ${{ matrix.experimental }}
+        run: "hhvm vendor/bin/hacktest tests"

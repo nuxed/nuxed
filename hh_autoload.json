@@ -1,0 +1,27 @@
+{
+    "roots": [
+        "src/Asset",
+        "src/Cache",
+        "src/Configuration",
+        "src/Console",
+        "src/Crypto",
+        "src/DependencyInjection",
+        "src/Environment",
+        "src/EventDispatcher",
+        "src/Filesystem",
+        "src/Hook",
+        "src/Http",
+        "src/Inflector",
+        "src/Json",
+        "src/Log",
+        "src/Process",
+        "src/Serializer",
+        "src/Stopwatch",
+        "src/Translation"
+    ],
+    "devRoots": [
+        "src/DevTools",
+        "tests/"
+    ],
+    "devFailureHandler": "Facebook\\AutoloadMap\\HHClientFallbackHandler"
+}
