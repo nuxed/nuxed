@@ -5,7 +5,7 @@ use namespace HH\Lib\{Str, Vec};
 /**
  * Execute the given command, followed by the given arguments.
  *
- * @note: Arguments will be espaced.
+ * @note: Arguments will be escaped.
  */
 async function execute(string $command, string ...$args): Awaitable<Result> {
   $original_command = $command;
