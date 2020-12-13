@@ -5,7 +5,7 @@ namespace Nuxed\Console\UserInput;
  */
 interface IUserInput<T> {
   /**
-   * Set the display position (line, column).
+   * Set the display position (column, row).
    *
    * Implementation should not change position unless this method
    * is called.

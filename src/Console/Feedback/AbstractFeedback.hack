@@ -235,7 +235,13 @@ abstract class AbstractFeedback implements IFeedback {
   }
 
   /**
-   * {@inheritdoc}
+   * Set the display position (column, row).
+   *
+   * Implementation should not change position unless this method
+   * is called.
+   *
+   * When changing positions, the implementation should always save the cursor
+   * position, then restore it.
    */
   public function setPosition(?(int, int) $position): void {
     $this->position = $position;

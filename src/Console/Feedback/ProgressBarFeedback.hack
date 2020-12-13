@@ -74,10 +74,10 @@ final class ProgressBarFeedback extends AbstractFeedback {
 
     $cursor = null;
     if ($this->position is nonnull) {
-      list($line, $column) = $this->position;
+      list($column, $row) = $this->position;
       $cursor = $this->output->getCursor();
       await $cursor->save();
-      await $cursor->move($line, $column);
+      await $cursor->move($column, $row);
     }
 
     await $this->output->erase();

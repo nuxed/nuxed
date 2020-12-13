@@ -27,7 +27,7 @@ interface IFeedback {
   public function setMessage(string $message): this;
 
   /**
-   * Set the display position (line, column).
+   * Set the display position (column, row).
    *
    * Implementation should not change position unless this method
    * is called.

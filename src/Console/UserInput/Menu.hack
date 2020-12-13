@@ -21,9 +21,9 @@ final class Menu extends AbstractUserInput<string> {
 
     $lastOperation = async {
       if ($this->position is nonnull) {
-        list($line, $column) = $this->position;
+        list($column, $row) = $this->position;
         await $this->output->getCursor()->save();
-        await $this->output->getCursor()->move($line, $column);
+        await $this->output->getCursor()->move($column, $row);
       }
     };
 
