@@ -1,6 +1,6 @@
 namespace Nuxed\Process;
 
-use namespace HH\Lib\{Str, Vec};
+use namespace HH\Lib\{C, Str, Vec};
 
 /**
  * Execute the given command, followed by the given arguments.
@@ -11,11 +11,13 @@ async function execute(string $command, string ...$args): Awaitable<Result> {
   $original_command = $command;
   $command .= ' ';
   $command .= $args
-    |> Vec\map($$, $arg ==> \escapeshellarg($arg))
+    |> Vec\map(
+      $$,
+      $arg ==> !C\contains(vec['|', '&'], $arg) ? \escapeshellarg($arg) : $arg,
+    )
     |> Str\join($$, ' ');
 
   $spec = darray[
-    0 => varray['pipe', 'r'],
     1 => varray['pipe', 'w'],
     2 => varray['pipe', 'w'],
   ];
@@ -24,8 +26,8 @@ async function execute(string $command, string ...$args): Awaitable<Result> {
   $proc = \proc_open($command, $spec, inout $pipes);
   invariant($proc, 'Failed to execute: %s', $command);
 
-  list($stdin, $stdout, $stderr) = $pipes;
-  \fclose($stdin);
+  $stdout = $pipes[1];
+  $stderr = $pipes[2];
   \stream_set_blocking($stdout, false);
 
   $exit_code = -2;

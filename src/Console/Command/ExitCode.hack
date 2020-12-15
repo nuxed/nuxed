@@ -9,7 +9,7 @@ enum ExitCode: int as int {
   /**
    * Catchall for general errors.
    */
-  FAILUER = 1;
+  FAILURE = 1;
 
   /**
    * Command has been skipped.

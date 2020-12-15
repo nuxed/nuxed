@@ -25,7 +25,7 @@ final class StandardErrorHandler implements IErrorHandler {
 
     $code = $exception->getCode() as arraykey;
     if ($code is string) {
-      $code = Str\to_int($code) ?? Command\ExitCode::FAILUER;
+      $code = Str\to_int($code) ?? Command\ExitCode::FAILURE;
     } else {
       $code as int;
     }

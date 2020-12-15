@@ -95,7 +95,7 @@ final class FormatCommand extends Command\Command {
       (float)$event->getMemory() / 1024 / 1024,
     ));
 
-    return $dirty ? Command\ExitCode::FAILUER : Command\ExitCode::SUCCESS;
+    return $dirty ? Command\ExitCode::FAILURE : Command\ExitCode::SUCCESS;
   }
 
   private async function format(
