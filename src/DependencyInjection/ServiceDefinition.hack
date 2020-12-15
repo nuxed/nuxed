@@ -2,12 +2,12 @@ namespace Nuxed\DependencyInjection;
 
 final class ServiceDefinition<<<__Enforceable>> reify T> {
   private vec<string> $tags = vec[];
-  private vec<IInflector<T>> $inflectors = vec[];
+  private vec<Inflector\IInflector<T>> $inflectors = vec[];
   private ?T $resolved = null;
 
   public function __construct(
     private classname<T> $type,
-    private IFactory<T> $factory,
+    private Factory\IFactory<T> $factory,
     private bool $shared = true,
   ) {}
 
@@ -34,40 +34,46 @@ final class ServiceDefinition<<<__Enforceable>> reify T> {
     return $this->tags;
   }
 
-  public function getFactory(): IFactory<T> {
+  public function getFactory(): Factory\IFactory<T> {
     return $this->factory;
   }
 
-  public function setFactory(IFactory<T> $factory): this {
-    $this->factory = $factory;
-    $this->resolved = null;
-
-    return $this;
+  public function getInflectors(): Container<Inflector\IInflector<T>> {
+    return $this->inflectors;
   }
 
   public function isShared(): bool {
     return $this->shared;
   }
 
-  public function addTag<<<__Enforceable>> reify TT>(classname<TT> $tag): this {
-    $this->tags[] = $tag;
-    return $this;
+  public function withFactory(Factory\IFactory<T> $factory): this {
+    $clone = clone $this;
+    $clone->factory = $factory;
+    $clone->resolved = null;
+
+    return $clone;
   }
 
-  public function setShared(bool $shared = true): this {
-    $this->shared = $shared;
-
-    return $this;
+  public function withTag<<<__Enforceable>> reify TT>(
+    classname<TT> $tag,
+  ): this {
+    $clone = clone $this;
+    $clone->tags[] = $tag;
+    return $clone;
   }
 
-  public function getInflectors(): Container<IInflector<T>> {
-    return $this->inflectors;
+  public function withShared(bool $shared): this {
+    $clone = clone $this;
+    $clone->shared = $shared;
+
+    return $clone;
   }
 
-  public function inflect(IInflector<T> $inflector): this {
-    $this->inflectors[] = $inflector;
-    $this->resolved = null;
+  public function withInflector(Inflector\IInflector<T> $inflector): this {
+    $clone = clone $this;
+    $clone->inflectors[] = $inflector;
+    $clone->resolved = null;
 
-    return $this;
+    return $clone;
   }
 }

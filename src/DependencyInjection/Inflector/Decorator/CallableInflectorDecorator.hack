@@ -1,9 +1,10 @@
-namespace Nuxed\DependencyInjection\Decorator;
+namespace Nuxed\DependencyInjection\Inflector\Decorator;
 
 use namespace Nuxed\DependencyInjection;
+use namespace Nuxed\DependencyInjection\Inflector;
 
 final class CallableInflectorDecorator<<<__Enforceable>> reify T>
-  implements DependencyInjection\IInflector<T> {
+  implements Inflector\IInflector<T> {
   public function __construct(
     private (function(T, DependencyInjection\IServiceContainer): T) $callable,
   ) {}

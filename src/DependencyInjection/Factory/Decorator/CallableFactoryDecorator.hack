@@ -1,9 +1,10 @@
-namespace Nuxed\DependencyInjection\Decorator;
+namespace Nuxed\DependencyInjection\Factory\Decorator;
 
 use namespace Nuxed\DependencyInjection;
+use namespace Nuxed\DependencyInjection\Factory;
 
 final class CallableFactoryDecorator<<<__Enforceable>> reify T>
-  implements DependencyInjection\IFactory<T> {
+  implements Factory\IFactory<T> {
   public function __construct(
     private (function(DependencyInjection\IServiceContainer): T) $callable,
   ) {}

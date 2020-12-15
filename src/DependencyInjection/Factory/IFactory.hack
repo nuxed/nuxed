@@ -1,4 +1,6 @@
-namespace Nuxed\DependencyInjection;
+namespace Nuxed\DependencyInjection\Factory;
+
+use namespace Nuxed\DependencyInjection;
 
 /**
  * A factory is a service that are able to create a specifiec service
@@ -8,5 +10,5 @@ interface IFactory<T> {
   /**
    * Create service `T` using the given service container.
    */
-  public function create(IServiceContainer $container): T;
+  public function create(DependencyInjection\IServiceContainer $container): T;
 }

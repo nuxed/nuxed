@@ -8,17 +8,20 @@ final class ContainerBuilder {
 
   public function __construct(
     private Configuration\IConfiguration $configuration,
+    private Container<Processor\IProcessor> $processors,
   ) {}
 
-  public function register(IServiceProvider $provider): this {
-    $provider->register($this, $this->configuration);
+  public function register(IServiceProvider ...$providers): this {
+    foreach ($providers as $provider) {
+      $provider->register($this, $this->configuration);
+    }
 
     return $this;
   }
 
   public function add<<<__Enforceable>> reify T>(
     classname<T> $service,
-    IFactory<T> $factory,
+    Factory\IFactory<T> $factory,
     bool $shared = true,
   ): this {
     $this->addDefinition<T>(
@@ -29,21 +32,26 @@ final class ContainerBuilder {
   }
 
   public function tag<
-    <<__Enforceable>> reify TT,
-    <<__Enforceable>> reify TS as TT,
-  >(classname<TT> $tag, classname<TS> $service): this {
-    $definition = $this->getDefinition<TS>($service);
-    $definition->addTag<TT>($tag);
+    <<__Enforceable>> reify TTag,
+    <<__Enforceable>> reify TService as TTag,
+  >(classname<TTag> $tag, classname<TService> $service): this {
+    $definition = $this->getDefinition<TService>($service);
+    $definition = $definition->withTag<TTag>($tag);
+    // replace the old definition.
+    $this->addDefinition<TService>($definition);
 
     return $this;
   }
 
   public function inflect<<<__Enforceable>> reify T>(
     classname<T> $service,
-    IInflector<T> $inflector,
+    Inflector\IInflector<T> $inflector,
   ): this {
     $definition = $this->getDefinition<T>($service);
-    $definition->inflect($inflector);
+    $definition = $definition->withInflector($inflector);
+
+    // replace the old definition.
+    $this->addDefinition<T>($definition);
 
     return $this;
   }
@@ -51,6 +59,10 @@ final class ContainerBuilder {
   private function addDefinition<<<__Enforceable>> reify T>(
     ServiceDefinition<T> $definition,
   ): void {
+    foreach ($this->processors as $processor) {
+      $definition = $processor->process<T>($definition);
+    }
+
     $this->definitions[$definition->getType()] = $definition;
   }
 
@@ -74,12 +86,12 @@ final class ContainerBuilder {
       $this->definitions,
       ($definition) ==> {
         $definition as ServiceDefinition<_>;
-        return clone $definition;
+        return $definition;
       },
     );
 
     return new ServiceContainer(
-      /* HH_IGNORE_ERROR[4110] */
+      /* HH_IGNORE_ERROR[4110] - this is technically wrong, if keyed container is reified, it will fail, but there's no other solution. */
       $definitions,
       $delegates,
     );
