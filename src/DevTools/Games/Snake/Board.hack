@@ -1,7 +1,6 @@
 namespace Nuxed\DevTools\Games\Snake;
 
-use namespace HH\Lib;
-use namespace HH\Lib\{C, Str, Dict, Vec, PseudoRandom};
+use namespace HH\Lib\{PseudoRandom, Str, Vec};
 use namespace Nuxed\Console\Output;
 
 final class Board {
@@ -71,7 +70,7 @@ final class Board {
     foreach (Str\split($lines, "\n") as $line) {
       await $output->getCursor()->move($topLeft->x, $y);
       $y++;
-      await $output->write("<$font>$line</>");
+      await $output->write(Str\format('<%s>%s</>', $font, $line));
     }
   }
 

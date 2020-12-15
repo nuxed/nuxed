@@ -1,7 +1,7 @@
 namespace Nuxed\DevTools\Games\Snake;
 
 use namespace HH\Asio;
-use namespace HH\Lib\{C, Vec, Math, Str};
+use namespace HH\Lib\{C, Math, Str};
 use namespace Nuxed\Console\{Input, Output};
 
 final class Game {
