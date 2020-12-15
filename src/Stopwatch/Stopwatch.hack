@@ -7,7 +7,9 @@ final class Stopwatch {
   private vec<Section> $activeSections = vec[];
 
   public function __construct() {
-    $this->reset();
+    $section = new Section(null);
+    $this->sections['__root__'] = $section;
+    $this->activeSections[] = $section;
   }
 
   public function getSections(): KeyedContainer<string, Section> {
@@ -110,14 +112,5 @@ final class Stopwatch {
    */
   public function getSectionEvents(string $id): KeyedContainer<string, Event> {
     return idx($this->sections, $id)?->getEvents() ?? dict[];
-  }
-
-  /**
-   * Resets the stopwatch to its original state.
-   */
-  public function reset(): void {
-    $section = new Section(null);
-    $this->sections['__root__'] = $section;
-    $this->activeSections[] = $section;
   }
 }
