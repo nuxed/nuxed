@@ -9,7 +9,7 @@
         "src/Environment",
         "src/EventDispatcher",
         "src/Filesystem",
-        "src/Hook",
+        "src/Kernel",
         "src/Http",
         "src/Inflector",
         "src/Json",
