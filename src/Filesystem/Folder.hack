@@ -240,7 +240,7 @@ final class Folder extends Node {
     bool $recursive = false,
   ): Awaitable<Container<Node>> {
     return Vec\filter(
-      await $this->list<Node>(true, $recursive),
+      await $this->list<Node>(false, $recursive),
       ($node) ==> Regex\matches(
         $this->path()->relativeTo($node->path())
           |> $$->toString()
