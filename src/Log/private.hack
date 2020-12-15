@@ -8,7 +8,7 @@ function stringify(mixed $value): string {
   }
 
   if ($value is string) {
-    return Str\format('string("%s")', $value);
+    return Str\format('string("%s")', Str\replace($value, '"', '\"'));
   }
 
   if ($value is num) {
@@ -59,7 +59,9 @@ function stringify(mixed $value): string {
       $result .= Str\format('%s => %s, ', stringify($key), stringify($value));
     }
 
-    $result = Str\ends_with($result, ', ') ? Str\slice($result, -2) : $result;
+    $result = Str\ends_with($result, ', ')
+      ? Str\strip_suffix($result, ', ')
+      : $result;
 
     return $result.')';
   }
@@ -70,7 +72,9 @@ function stringify(mixed $value): string {
       $result .= Str\format('%s, ', stringify($value));
     }
 
-    $result = Str\ends_with($result, ', ') ? Str\slice($result, -2) : $result;
+    $result = Str\ends_with($result, ', ')
+      ? Str\strip_suffix($result, ', ')
+      : $result;
 
     return $result.')';
   }
