@@ -4,12 +4,11 @@ use namespace HH;
 use namespace Nuxed\{Filesystem, Translation};
 use namespace HH\Lib\Str;
 use namespace Nuxed\Translation\{Exception, Reader};
+use namespace Facebook\TypeSpec;
 
 abstract class FileLoader implements ILoader {
-  const type TFormat = string;
-
   public async function load(
-    this::TFormat $resource,
+    string $resource,
     string $locale,
     string $domain = 'messages',
   ): Awaitable<Translation\MessageCatalogue> {
@@ -29,12 +28,10 @@ abstract class FileLoader implements ILoader {
     }
 
     $resource = await $this->loadResource($resource->toString());
-    $loader = new TreeLoader();
-    return await $loader->load($resource, $locale, $domain);
-  }
+    $catalogue = new Translation\MessageCatalogue($locale);
+    $catalogue->add($this->flatten($resource), $domain);
 
-  public function getFormat(): HH\TypeStructure<this::TFormat> {
-    return HH\type_structure($this, 'TFormat');
+    return $catalogue;
   }
 
   /**
@@ -43,4 +40,25 @@ abstract class FileLoader implements ILoader {
   abstract protected function loadResource(
     string $resource,
   ): Awaitable<KeyedContainer<string, mixed>>;
+
+  private function flatten(
+    KeyedContainer<string, mixed> $tree,
+  ): KeyedContainer<string, string> {
+    $result = dict[];
+    foreach ($tree as $key => $value) {
+      if ($value is arraykey || $value is num) {
+        $result[$key] = $value is num
+          ? Str\format_number($value, 2)
+          : (string)$value;
+      } else {
+        $value = TypeSpec\dict(TypeSpec\string(), TypeSpec\mixed())
+          ->coerceType($value);
+        foreach ($this->flatten($value) as $k => $v) {
+          $result[$key.'.'.$k] = $v;
+        }
+      }
+    }
+
+    return $result;
+  }
 }

@@ -14,7 +14,7 @@ final class Translator implements ITranslator, ILocaleAware, ITranslatorBag {
 
   private ?vec<string> $parentLocales;
 
-  private dict<string, vec<(string, mixed, string)>> $resources = dict[];
+  private dict<string, vec<(string, string, string)>> $resources = dict[];
 
   private Formatter\IMessageFormatter $formatter;
 
@@ -41,9 +41,9 @@ final class Translator implements ITranslator, ILocaleAware, ITranslatorBag {
    *
    * @throws InvalidArgumentException If the locale contains invalid characters
    */
-  public function addResource<T>(
+  public function addResource(
     string $format,
-    T $resource,
+    string $resource,
     string $locale,
     ?string $domain = null,
   ): void {
@@ -177,14 +177,7 @@ final class Translator implements ITranslator, ILocaleAware, ITranslatorBag {
 
           $loader = $this->loaders[$format];
           try {
-            $catalogue = await $loader->load(
-              TypeAssert\matches_type_structure(
-                $loader->getFormat(),
-                $resource,
-              ),
-              $locale,
-              $domain,
-            );
+            $catalogue = await $loader->load($resource, $locale, $domain);
             $this->catalogues[$locale]->addCatalogue($catalogue);
           } catch (TypeAssert\IncorrectTypeException $e) {
             throw new Exception\InvalidResourceException(

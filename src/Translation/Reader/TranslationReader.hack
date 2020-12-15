@@ -4,7 +4,6 @@ use namespace HH\Asio;
 use namespace HH\Lib\Str;
 use namespace Nuxed\{Filesystem, Translation};
 use namespace Nuxed\Translation\Loader;
-use namespace Facebook\TypeAssert;
 
 /**
  * TranslationReader reads translation messages from translation files.
@@ -51,10 +50,7 @@ final class TranslationReader implements ITranslationReader {
           $lastOperation = async {
             await $lastOperation;
             $domain = Str\strip_suffix($basename, $extension);
-            $resource = TypeAssert\matches_type_structure(
-              $loader->getFormat(),
-              $file->path()->toString(),
-            );
+            $resource = $file->path()->toString();
 
             $catalogue->addCatalogue(
               await $loader->load($resource, $catalogue->getLocale(), $domain),
