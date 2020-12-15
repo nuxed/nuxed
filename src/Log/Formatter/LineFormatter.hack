@@ -5,7 +5,7 @@ use namespace Nuxed\Log;
 
 final class LineFormatter implements IFormatter {
   const string SIMPLE_DATE = 'Y-m-d\TH:i:s.uP';
-  const string SIMPLE_FORMAT = "[%time%][%level%]: %message%\n";
+  const string SIMPLE_FORMAT = "[%time%][%level%]: %message% %context%\n";
 
   private string $format;
   private string $dateFormat;
@@ -60,12 +60,13 @@ final class LineFormatter implements IFormatter {
       '%message%' => $message,
       '%time%' => (new \DateTime())->format($this->dateFormat),
       '%level%' => Str\uppercase((string)$level),
+      '%context%' => $this->stringify<dict<string, T>>($context),
     ];
 
     return \strtr($output, $replaces);
   }
 
-  public function stringify<<<__Enforceable>> reify T>(T $value): string {
+  public function stringify<reify T>(T $value): string {
     return $this->replaceNewlines(Log\_Private\stringify($value));
   }
 
