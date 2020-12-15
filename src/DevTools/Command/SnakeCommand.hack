@@ -1,10 +1,8 @@
 namespace Nuxed\DevTools\Command;
 
-use namespace HH\Asio;
-use namespace HH\Lib\Str;
-use namespace Nuxed\Console;
-use namespace Nuxed\Process;
-use namespace Nuxed\Console\{Command, Output, Formatter\Style};
+use namespace Nuxed\{Console, Process};
+use namespace Nuxed\Console\Formatter\Style;
+use namespace Nuxed\Console\Command;
 use namespace Nuxed\DevTools\Games\Snake;
 
 final class SnakeCommand extends Command\Command {
@@ -36,8 +34,9 @@ final class SnakeCommand extends Command\Command {
       vec[Style\Effect::BOLD, Style\Effect::BLINK],
     ));
 
-    $sttyMode = \shell_exec('stty -g');
-    \shell_exec('stty -icanon -echo');
+    $result = await Process\execute('stty', '-g');
+    $mode = $result->getOutput();
+    await Process\execute('stty', '-icanon', '-echo');
 
     await $this->output->getCursor()->hide();
 
@@ -49,7 +48,7 @@ final class SnakeCommand extends Command\Command {
     await $game->run($this->input, $this->output);
 
     await $this->output->getCursor()->show();
-    \shell_exec('stty '.$sttyMode);
+    await Process\execute('stty ', $mode);
 
     return Command\ExitCode::SUCCESS;
   }
