@@ -5,7 +5,7 @@ use namespace HH\Lib\{IO, Str};
 use namespace Nuxed\Environment;
 
 final abstract class Terminal {
-  const int DefaultHeight = 60;
+  const int DefaultHeight = 30;
   const int DefaultWidth = 120;
 
   private static ?int $height = null;

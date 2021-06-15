@@ -19,7 +19,6 @@ final class BufferedOutput extends AbstractOutput {
     $this->stdout .= $this->format($message, $type);
   }
 
-
   public function fetch(): string {
     $content = $this->stdout;
     $this->stdout = '';

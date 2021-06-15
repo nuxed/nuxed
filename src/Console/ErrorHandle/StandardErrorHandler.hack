@@ -64,7 +64,7 @@ final class StandardErrorHandler implements IErrorHandler {
   ): Awaitable<void> {
     await $io->writeln(
       Str\format(
-        '- <bold>%s:%d</>%s',
+        '- %s:%d%s',
         $exception->getFile(),
         $exception->getLine(),
         Output\IOutput::EndOfLine,
@@ -80,16 +80,16 @@ final class StandardErrorHandler implements IErrorHandler {
     $lastOperation = async {
     };
 
-    $frames = Vec\filter<dict<string, string>>(
-      Vec\map<darray<string, string>, dict<string, string>>(
+    $frames = Vec\filter<dict<string, string>, _>(
+      Vec\map<dict<string, string>, dict<string, string>, _>(
         /* HH_IGNORE_ERROR[4110] */
         $exception->getTrace(),
-        (darray<string, string> $frame): dict<string, string> ==> {
+        (dict<string, string> $frame)[]: dict<string, string> ==> {
           unset($frame['args']);
           return dict<string, string>($frame);
         },
       ),
-      (dict<string, string> $frame): bool ==>
+      (dict<string, string> $frame)[]: bool ==>
         C\contains_key<string, string, string>($frame, 'function') &&
         C\contains_key<string, string, string>($frame, 'file'),
     );

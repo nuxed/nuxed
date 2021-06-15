@@ -1,7 +1,7 @@
 namespace Nuxed\Http\Message\_Private;
 
 use namespace HH\Lib\{Regex, Str};
-use namespace Nuxed\Http\Message\Exception;
+use namespace Nuxed\Http\{Exception, Message};
 
 final class ProtocolVersionMarshaler {
   public function marshal(KeyedContainer<arraykey, mixed> $server): string {
@@ -9,8 +9,8 @@ final class ProtocolVersionMarshaler {
     if (
       !Regex\matches($protocol, re"#^(HTTP/)?(?P<version>[1-9]\d*(?:\.\d)?)$#")
     ) {
-      throw new Exception\UnrecognizedProtocolVersionException(
-        Str\format('Unrecognized protocol version (%s).', $protocol),
+      throw new Exception\ServerException(
+        Message\StatusCode::VERSION_NOT_SUPPORTED,
       );
     }
 

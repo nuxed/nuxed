@@ -1,7 +1,7 @@
 namespace Nuxed\Http\Client;
 
 use namespace HH\Lib\{C, Dict, Str, Vec};
-use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\{Exception, Message};
 use namespace Facebook\{TypeAssert, TypeSpec};
 
 abstract class HttpClient implements IHttpClient {
@@ -25,7 +25,7 @@ abstract class HttpClient implements IHttpClient {
    * contain the query string as well.
    */
   final public async function request(
-    string $method,
+    Message\HttpMethod $method,
     string $uri,
     HttpClientOptions $options = shape(),
   ): Awaitable<Message\Response> {

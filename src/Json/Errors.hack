@@ -1,5 +1,8 @@
 namespace Nuxed\Json;
 
+enum ErrorMessages: string {
+}
+
 const dict<int, string> Errors = dict[
   \JSON_ERROR_NONE => 'No error',
   \JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',

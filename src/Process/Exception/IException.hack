@@ -1,6 +1,6 @@
 namespace Nuxed\Process\Exception;
 
-<<__Sealed(SubprocessException::class)>>
+<<__Sealed(RuntimeException::class)>>
 interface IException {
   require extends \Exception;
 }

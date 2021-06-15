@@ -95,7 +95,7 @@ final class Session implements ISession {
   public function forget(string $key): void {
     $this->data = Dict\filter_with_key(
       $this->data,
-      ($k, $v): bool ==> $key !== $k,
+      ($k, $_v): bool ==> $key !== $k,
     );
   }
 
@@ -162,7 +162,7 @@ final class Session implements ISession {
    *
    * for example, calling
    * <code>
-   *     $session->exipre(300);
+   *     $session->expire(300);
    * </code>
    * would make the session expire in 5 minutes of inactivity.
    */
@@ -174,7 +174,7 @@ final class Session implements ISession {
   /*
    * Determine how long the session cookie should live.
    *
-   * Generally, this will return the value provided to exipre().
+   * Generally, this will return the value provided to expire().
    *
    * If that method has not been called, the value can return one of the
    * following:

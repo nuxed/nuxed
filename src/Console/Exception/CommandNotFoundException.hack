@@ -9,8 +9,8 @@ final class CommandNotFoundException
   extends \RuntimeException
   implements Exception {
 
-  <<__Pure, __MaybeMutable, __Override>>
-  public function getCode(): int {
+  <<__Override>>
+  public function getCode()[]: int {
     return Command\ExitCode::COMMAND_NOT_FOUND;
   }
 }

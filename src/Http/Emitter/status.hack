@@ -1,6 +1,7 @@
 namespace Nuxed\Http\Emitter;
 
 use namespace HH\Lib\Str;
+use namespace Nuxed\Http\Exception;
 
 /**
  * Emit the status line.
@@ -13,7 +14,7 @@ function status(string $protocol, int $status, ?string $reason = null): void {
   if (
     !Str\contains($protocol, '.') || ((string)(float)$protocol) !== $protocol
   ) {
-    throw new Exception\RuntimeException(Str\format(
+    throw new Exception\InvalidArgumentException(Str\format(
       'The protocol string MUST contain only the HTTP version number (e.g., "1.1", "1.0").',
     ));
   }

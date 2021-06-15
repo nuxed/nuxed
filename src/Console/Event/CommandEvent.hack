@@ -5,7 +5,6 @@ namespace Nuxed\Console\Event;
  */
 final class CommandEvent extends Event {
 
-
   /**
    * Indicates if the command should be run or skipped.
    */

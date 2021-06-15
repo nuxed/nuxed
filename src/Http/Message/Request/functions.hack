@@ -31,7 +31,12 @@ function is_no_cache(Http\Message\IRequest $request): bool {
  */
 function is_method_safe(Http\Message\IRequest $request): bool {
   return C\contains(
-    vec['GET', 'HEAD', 'OPTIONS', 'TRACE'],
+    vec[
+      Message\HttpMethod::GET,
+      Message\HttpMethod::HEAD,
+      Message\HttpMethod::OPTIONS,
+      Message\HttpMethod::TRACE,
+    ],
     $request->getMethod(),
   );
 }
@@ -41,7 +46,15 @@ function is_method_safe(Http\Message\IRequest $request): bool {
  */
 function is_method_idempotent(Http\Message\IRequest $request): bool {
   return C\contains(
-    vec['HEAD', 'GET', 'PUT', 'DELETE', 'TRACE', 'OPTIONS', 'PURGE'],
+    vec[
+      Message\HttpMethod::HEAD,
+      Message\HttpMethod::GET,
+      Message\HttpMethod::PUT,
+      Message\HttpMethod::DELETE,
+      Message\HttpMethod::TRACE,
+      Message\HttpMethod::OPTIONS,
+      Message\HttpMethod::PURGE,
+    ],
     $request->getMethod(),
   );
 }
@@ -52,19 +65,21 @@ function is_method_idempotent(Http\Message\IRequest $request): bool {
  * @see https://tools.ietf.org/html/rfc7231#section-4.2.3
  */
 function is_method_cacheable(Http\Message\IRequest $request): bool {
-  return C\contains(vec['GET', 'HEAD'], $request->getMethod());
+  return C\contains(
+    vec[Message\HttpMethod::GET, Message\HttpMethod::HEAD],
+    $request->getMethod(),
+  );
 }
 
 function json(
   Message\Uri $uri,
   mixed $data,
-  string $method = 'POST',
+  Message\HttpMethod $method = Message\HttpMethod::POST,
   KeyedContainer<string, Container<string>> $headers = dict[],
   string $version = '1.1',
 ): Message\Request {
   $flags = \JSON_HEX_TAG | \JSON_HEX_APOS | \JSON_HEX_AMP | \JSON_HEX_QUOT;
-  $body = Message\Body\temporary();
-  $body->write(Json\encode($data, false, $flags));
+  $body = Message\Body\memory(Json\encode($data, false, $flags));
   $headers = dict($headers);
   $headers['content-type'] ??= vec['application/json'];
 

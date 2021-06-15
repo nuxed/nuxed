@@ -26,7 +26,7 @@ function cookie(
 }
 
 function request(
-  string $method,
+  HttpMethod $method,
   Message\IUri $uri,
   KeyedContainer<string, Container<string>> $headers = dict[],
   ?IO\SeekableReadWriteHandle $body = null,

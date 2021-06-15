@@ -8,9 +8,6 @@ async function devtools(): Awaitable<void> {
 
     $application = new Console\Application('Nuxed DevTools');
     $application->add(new DevTools\Command\SnakeCommand());
-    $application->add(
-        new DevTools\Command\FormatCommand(new DevTools\Formatter\Formatter()),
-    );
 
     await $application->run();
 }

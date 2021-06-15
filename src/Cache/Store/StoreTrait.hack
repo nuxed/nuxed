@@ -24,10 +24,10 @@ trait StoreTrait {
       );
     }
 
-    foreach (vec['{', '}', '(', ')', '/', '\\', '@', ':'] as $c) {
+    foreach (vec['{', '}', '(', ')', '@', ':'] as $c) {
       if (Str\contains($key, $c)) {
         throw new Exception\InvalidArgumentException(Str\format(
-          'Cache key "%s" contains reserved characters {}()/\@:',
+          'Cache key "%s" contains reserved characters {}()@:',
           $key,
         ));
       }

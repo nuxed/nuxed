@@ -1,5 +1,7 @@
 namespace Nuxed\Console\Exception;
 
+use type Exception as BuiltinException;
+
 <<__Sealed(
   CommandNotFoundException::class,
   InvalidArgumentException::class,
@@ -11,5 +13,6 @@ namespace Nuxed\Console\Exception;
   MissingValueException::class,
   RuntimeException::class,
 )>>
-interface Exception extends Rx\Exception {
+interface Exception {
+  require extends BuiltinException;
 }

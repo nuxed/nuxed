@@ -1,21 +1,19 @@
 namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\{C, Dict, IO, Regex};
-use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\Exception;
 
 <<__Sealed(ServerRequest::class)>>
-class Request
-  extends Message<IO\SeekableReadHandle>
-  implements Message\IRequest {
-  protected string $method;
+class Request extends Message<IO\SeekableReadHandle> implements IRequest {
+  protected HttpMethod $method;
 
   protected ?string $requestTarget;
 
-  protected Message\IUri $uri;
+  protected IUri $uri;
 
   public function __construct(
-    string $method,
-    Message\IUri $uri,
+    HttpMethod $method,
+    IUri $uri,
     KeyedContainer<string, Container<string>> $headers = dict[],
     ?IO\SeekableReadHandle $body = null,
     string $version = '1.1',
@@ -87,15 +85,15 @@ class Request
    *
    * @throws Exception\InvalidArgumentException if the request target is invalid
    */
-  public function withRequestTarget(string $requestTarget): this {
-    if (Regex\matches($requestTarget, re"#\s#")) {
+  public function withRequestTarget(string $request_target): this {
+    if (Regex\matches($request_target, re"#\s#")) {
       throw new Exception\InvalidArgumentException(
         'Invalid request target provided; cannot contain whitespace',
       );
     }
 
     $new = clone $this;
-    $new->requestTarget = $requestTarget;
+    $new->requestTarget = $request_target;
 
     return $new;
   }
@@ -103,14 +101,14 @@ class Request
   /**
    * Retrieves the HTTP method of the request.
    */
-  public function getMethod(): string {
+  public function getMethod(): HttpMethod {
     return $this->method;
   }
 
   /**
    * Return an instance with the provided HTTP method.
    */
-  public function withMethod(string $method): this {
+  public function withMethod(HttpMethod $method): this {
     $new = clone $this;
     $new->method = $method;
 
@@ -122,7 +120,7 @@ class Request
    *
    * @link http://tools.ietf.org/html/rfc3986#section-4.3
    */
-  public function getUri(): Message\IUri {
+  public function getUri(): IUri {
     return $this->uri;
   }
 
@@ -141,7 +139,7 @@ class Request
    *
    * @link http://tools.ietf.org/html/rfc3986#section-4.3
    */
-  public function withUri(Message\IUri $uri, bool $preserveHost = false): this {
+  public function withUri(IUri $uri, bool $preserve_host = false): this {
     if ($uri === $this->uri) {
       return $this;
     }
@@ -149,7 +147,7 @@ class Request
     $new = clone $this;
     $new->uri = $uri;
     $new->requestTarget = null;
-    if (!$preserveHost || !$this->hasHeader('Host')) {
+    if (!$preserve_host || !$this->hasHeader('Host')) {
       $new->updateHostFromUri();
     }
 

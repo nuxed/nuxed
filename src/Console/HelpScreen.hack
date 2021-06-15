@@ -130,11 +130,11 @@ final class HelpScreen {
 
     $indentation = 0;
     $maxLength = Math\max(
-      Vec\map<string, int>(
+      Vec\map(
         Vec\keys<string, Command\Command>($this->commands),
         ($key) ==> {
           $indentation = new \HH\Lib\Ref<int>(0);
-          Vec\map<string, void>(
+          Vec\map(
             Str\chunk($key),
             (string $char): void ==> {
               $indentation->value += $char === ':' ? 1 : 0;
@@ -171,7 +171,7 @@ final class HelpScreen {
             $nestedNames[] = $nest;
 
             $indentation = new \HH\Lib\Ref<int>(0);
-            Vec\map<string, void>(
+            Vec\map(
               Str\chunk($name),
               (string $char): void ==> {
                 $indentation->value += $char === ':' ? 1 : 0;
@@ -190,7 +190,7 @@ final class HelpScreen {
       }
 
       $indentation = new \HH\Lib\Ref<int>(0);
-      Vec\map<string, void>(
+      Vec\map(
         Str\chunk($name),
         (string $char): void ==> {
           $indentation->value += $char === ':' ? 1 : 0;
@@ -282,7 +282,7 @@ final class HelpScreen {
       $entries[$name] = $argument->getDescription();
     }
 
-    $maxLength = Math\max(Vec\map<string, int>(
+    $maxLength = Math\max(Vec\map(
       Vec\keys<string, string>($entries),
       (string $key): int ==> Str\length($key),
     )) as nonnull;

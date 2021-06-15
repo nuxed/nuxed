@@ -21,9 +21,9 @@ async function copy(
   }
 
   $iteration++;
-  $content = await $source->readAsync($max_bytes, $timeout_ns);
+  $content = await $source->readAllAsync($max_bytes, $timeout_ns);
   if ('' !== $content) {
-    await $target->writeAsync($content, $timeout_ns);
+    await $target->writeAllAsync($content, $timeout_ns);
     await copy($source, $target, $max_bytes, $timeout_ns, $iteration);
   }
 

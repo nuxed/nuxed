@@ -7,10 +7,17 @@ use namespace Nuxed\Process;
  */
 <<__Memoize>>
 async function get_stty_columns(): Awaitable<?string> {
-  $result = await Process\execute('stty', '-a', '|', 'grep', 'columns');
-  if (!$result->isSuccess()) {
+  try {
+    list($content, $_) = await Process\execute(
+      'stty',
+      vec['-a', '|', 'grep', 'columns'],
+      null,
+      dict[],
+      false,
+    );
+
+    return $content;
+  } catch (Process\Exception\FailedExecutionException $e) {
     return null;
   }
-
-  return $result->getOutput();
 }

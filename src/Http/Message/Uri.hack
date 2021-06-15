@@ -1,7 +1,7 @@
 namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\{C, Regex, Str};
-use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\{Exception, Message};
 
 /**
  * Value object representing a URI.

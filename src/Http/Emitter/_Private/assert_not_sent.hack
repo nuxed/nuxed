@@ -1,6 +1,6 @@
 namespace Nuxed\Http\Emitter\_Private;
 
-use namespace Nuxed\Http\Emitter\Exception;
+use namespace Nuxed\Http\Exception;
 
 /**
  * Checks to see if content has previously been sent.

@@ -110,7 +110,7 @@ interface IServerRequest extends IRequest {
    * updated body parameters.
    */
   public function withUploadedFiles(
-    KeyedContainer<string, IUploadedFile> $uploadedFiles,
+    KeyedContainer<string, IUploadedFile> $uploaded_files,
   ): this;
 
   /**
@@ -150,7 +150,7 @@ interface IServerRequest extends IRequest {
    * updated body parameters.
    */
   public function withParsedBody(
-    ?KeyedContainer<string, string> $parsedBody,
+    ?KeyedContainer<string, string> $parsed_body,
   ): this;
 
   /**

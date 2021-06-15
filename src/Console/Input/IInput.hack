@@ -1,5 +1,6 @@
 namespace Nuxed\Console\Input;
 
+use HH\Lib\IO;
 
 /**
  * The `Input` class contains all available `Flag`, `Argument`, `Option`, and
@@ -65,6 +66,11 @@ interface IInput {
    * Read in and return input from the user.
    */
   public function getUserInput(?int $length = null): Awaitable<string>;
+
+  /**
+   * Return the underyling `IO\ReadHandle` associated with this `Input` object.
+   */
+  public function getHandle(): IO\ReadHandle;
 
   /**
    * Parse input for all `Flag`, `Option`, and `Argument` candidates.

@@ -32,7 +32,7 @@ interface IHttpClient {
    * @throws Exception\IException If an error happens while processing the request.
    */
   public function request(
-    string $method,
+    Message\HttpMethod $method,
     string $uri,
     HttpClientOptions $options = shape(),
   ): Awaitable<Message\Response>;

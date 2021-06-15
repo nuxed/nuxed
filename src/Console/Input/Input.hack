@@ -78,7 +78,7 @@ final class Input implements IInput {
     IO\ReadHandle $stdin,
     bool $strict = false,
   ) {
-    $args = Vec\filter<string>($args, (string $arg): bool ==> '' !== $arg);
+    $args = Vec\filter($args, (string $arg)[]: bool ==> '' !== $arg);
     $this->stdin = $stdin;
     $this->reader = new IO\BufferedReader($stdin);
     $this->rawInput = $args;
@@ -208,10 +208,14 @@ final class Input implements IInput {
    */
   public async function getUserInput(?int $length = null): Awaitable<string> {
     if ($length is nonnull) {
-      return await $this->reader->readAsync($length);
+      return await $this->reader->readFixedSizeAsync($length);
     }
 
     return Str\trim(await $this->reader->readLinexAsync());
+  }
+
+  public function getHandle(): IO\ReadHandle {
+    return $this->stdin;
   }
 
   /**

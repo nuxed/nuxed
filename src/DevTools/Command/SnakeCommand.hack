@@ -24,9 +24,18 @@ final class SnakeCommand extends Command\Command {
       Style\ForegroundColor::MAGENTA,
       vec[Style\Effect::BOLD],
     ));
+    $this->output->getFormatter()->addStyle('super-goal', new Style\Style(
+      Style\BackgroundColor::BLACK,
+      Style\ForegroundColor::RED,
+      vec[Style\Effect::BOLD, Style\Effect::BLINK],
+    ));
     $this->output->getFormatter()->addStyle('background', new Style\Style(
       Style\BackgroundColor::BLACK,
       Style\ForegroundColor::CYAN,
+    ));
+    $this->output->getFormatter()->addStyle('footer', new Style\Style(
+      Style\BackgroundColor::CYAN,
+      Style\ForegroundColor::WHITE,
     ));
     $this->output->getFormatter()->addStyle('crash', new Style\Style(
       Style\BackgroundColor::BLACK,
@@ -34,9 +43,8 @@ final class SnakeCommand extends Command\Command {
       vec[Style\Effect::BOLD, Style\Effect::BLINK],
     ));
 
-    $result = await Process\execute('stty', '-g');
-    $mode = $result->getOutput();
-    await Process\execute('stty', '-icanon', '-echo');
+    list($mode, $_) = await Process\execute('stty', vec['-g']);
+    await Process\execute('stty', vec['-icanon', '-echo']);
 
     await $this->output->getCursor()->hide();
 
@@ -48,7 +56,7 @@ final class SnakeCommand extends Command\Command {
     await $game->run($this->input, $this->output);
 
     await $this->output->getCursor()->show();
-    await Process\execute('stty ', $mode);
+    await Process\execute('stty ', vec[$mode]);
 
     return Command\ExitCode::SUCCESS;
   }

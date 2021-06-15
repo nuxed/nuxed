@@ -20,9 +20,9 @@ async function stream(
   $source->seek($range['first']);
   $remaining = await copy_range($source, $target, $maxBufferLength, $remaining);
   if ($remaining > 0) {
-    $contents = await $source->readAsync($remaining);
+    $contents = await $source->readAllAsync($remaining);
     if ('' !== $contents) {
-      await $target->writeAsync($contents);
+      await $target->writeAllAsync($contents);
     }
   }
 

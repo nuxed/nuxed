@@ -30,8 +30,7 @@ final class JsonResponse extends Message\Response {
   ) {
     $this->setPayload($data);
     $json = static::encode($data, $encodingOptions);
-    $body = Message\Body\temporary();
-    $body->write($json);
+    $body = Message\Body\memory($json);
 
     $headers = _Private\inject_content_type_in_headers(
       'application/json',
@@ -70,8 +69,7 @@ final class JsonResponse extends Message\Response {
    */
   private function updateBodyFor(this $toUpdate): this {
     $json = static::encode($toUpdate->payload);
-    $body = Message\Body\temporary();
-    $body->write($json);
+    $body = Message\Body\memory($json);
 
     return $toUpdate->withBody($body);
   }

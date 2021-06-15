@@ -2,11 +2,12 @@ namespace Nuxed\Http\Message\_Private;
 
 use namespace HH\Lib\{IO, Str};
 use namespace Nuxed\Http;
-use namespace Nuxed\Http\Message\Exception;
+use namespace Nuxed\Http\Exception;
+
 function get_date_header<
-  TH as IO\SeekableHandle,
-  TM as Http\Message\IMessage<TH>,
->(TM $message, string $header): ?int {
+  Th as IO\SeekableHandle,
+  Tm as Http\Message\IMessage<Th>,
+>(Tm $message, string $header): ?int {
   if (!$message->hasHeader($header)) {
     return null;
   }
@@ -23,9 +24,9 @@ function get_date_header<
 }
 
 function with_date_header<
-  TH as IO\SeekableHandle,
-  TM as Http\Message\IMessage<TH>,
->(TM $message, string $header, ?int $date = null): TM {
+  Th as IO\SeekableHandle,
+  Tm as Http\Message\IMessage<Th>,
+>(Tm $message, string $header, ?int $date = null): Tm {
   if ($date is null) {
     return $message->withoutHeader($header);
   }

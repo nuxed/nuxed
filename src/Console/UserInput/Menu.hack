@@ -18,7 +18,6 @@ final class Menu extends AbstractUserInput<string> {
     $keys = Vec\keys($this->acceptedValues);
     $values = vec<string>($this->acceptedValues);
 
-
     $lastOperation = async {
       if ($this->position is nonnull) {
         list($column, $row) = $this->position;

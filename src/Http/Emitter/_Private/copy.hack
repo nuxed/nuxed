@@ -21,9 +21,9 @@ async function copy(
   }
 
   $iteration++;
-  $content = await $source->readAsync($max_bytes, $timeout_ns);
+  $content = await $source->readAllAsync($max_bytes, $timeout_ns);
   if ('' !== $content) {
-    await $target->writeAsync($content, $timeout_ns);
+    await $target->writeAllAsync($content, $timeout_ns);
     await copy($source, $target, $max_bytes, $timeout_ns, $iteration);
   }
 
@@ -38,10 +38,10 @@ async function copy_range(
   ?int $timeout_ns = null,
 ): Awaitable<int> {
   if ($remaining >= $length) {
-    $contents = await $source->readAsync($length, $timeout_ns);
+    $contents = await $source->readAllAsync($length, $timeout_ns);
     if ('' !== $contents) {
       $remaining -= Str\length($contents);
-      await $target->writeAsync($contents);
+      await $target->writeAllAsync($contents);
       await copy_range($source, $target, $length, $remaining, $timeout_ns);
     }
   }

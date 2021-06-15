@@ -1,6 +1,10 @@
 namespace Nuxed\Environment;
 
-use namespace Nuxed\Filesystem;
+use namespace HH\Lib\Filesystem;
+use namespace HH\Lib\File;
+use namespace HH\Lib\OS;
+
+use function file_exists;
 
 /**
  * Bootstrap your environment.
@@ -15,14 +19,13 @@ use namespace Nuxed\Filesystem;
  */
 async function bootstrap(
   string $path,
-  Mode $defaultMode = Mode::DEVELOPMENT,
+  Mode $default_mode = Mode::DEVELOPMENT,
 ): Awaitable<void> {
-  $path = Filesystem\Path::create($path);
-  $dist = Filesystem\Path::create($path->toString().'.dist');
-  if ($path->exists() || !$dist->exists()) {
-    await load($path->toString());
-  } else if ($dist->exists()) {
-    await load($dist->toString());
+  $dist = $path.'.dist';
+  if (file_exists($path) || !file_exists($dist)) {
+    await load($path);
+  } else if (file_exists($dist)) {
+    await load($dist);
   }
 
   try {
@@ -39,32 +42,30 @@ async function bootstrap(
     }
 
     // otherwise, we relay on the default mode provided.
-    $mode = $defaultMode;
+    $mode = $default_mode;
     put('APP_MODE', $mode);
   }
 
-  $local = Filesystem\Path::create($path->toString().'.local');
-  if ($mode !== Mode::TEST && $local->exists()) {
-    await load($local->toString());
+  $local = $path.'.local';
+  if ($mode !== Mode::TEST && file_exists($local)) {
+    await load($local);
   }
 
   if (Mode::LOCAL === $mode) {
     return;
   }
 
-  $modeSpecific = Filesystem\Path::create($path->toString().'.'.$mode);
-  if ($modeSpecific->exists()) {
-    await load($modeSpecific->toString());
+  $mode_specific = $path.'.'.$mode;
+  if (file_exists($mode_specific)) {
+    await load($mode_specific);
   }
 
   if (Mode::TEST === $mode) {
     return;
   }
 
-  $localModeSpecifc = Filesystem\Path::create(
-    $modeSpecific->toString().'.local',
-  );
-  if ($localModeSpecifc->exists()) {
-    await load($localModeSpecifc->toString());
+  $local_mode_specifc = $mode_specific.'.local';
+  if (file_exists($local_mode_specifc)) {
+    await load($local_mode_specifc);
   }
 }

@@ -53,19 +53,15 @@ interface IRequest extends IMessage<IO\SeekableReadHandle> {
    * @link http://tools.ietf.org/html/rfc7230#section-5.3 (for the various
    *     request-target forms allowed in request messages)
    */
-  public function withRequestTarget(string $requestTarget): this;
+  public function withRequestTarget(string $request_target): this;
 
   /**
    * Retrieves the HTTP method of the request.
    */
-  public function getMethod(): string;
+  public function getMethod(): HttpMethod;
 
   /**
    * Return an instance with the provided HTTP method.
-   *
-   * While HTTP method names are typically all uppercase characters, HTTP
-   * method names are case-sensitive and thus implementations SHOULD NOT
-   * modify the given string.
    *
    * This method MUST be implemented in such a way as to retain the
    * immutability of the message, and MUST return an instance that has the
@@ -73,7 +69,7 @@ interface IRequest extends IMessage<IO\SeekableReadHandle> {
    *
    * @throws Exception\IException for invalid HTTP methods.
    */
-  public function withMethod(string $method): this;
+  public function withMethod(HttpMethod $method): this;
 
   /**
    * Retrieves the URI instance.
@@ -91,7 +87,7 @@ interface IRequest extends IMessage<IO\SeekableReadHandle> {
    * over to the returned request.
    *
    * You can opt-in to preserving the original state of the Host header by
-   * setting `$preserveHost` to `true`. When `$preserveHost` is set to
+   * setting `$preserve_host` to `true`. When `$preserve_host` is set to
    * `true`, this method interacts with the Host header in the following ways:
    *
    * - If the Host header is missing or empty, and the new URI contains
@@ -109,5 +105,5 @@ interface IRequest extends IMessage<IO\SeekableReadHandle> {
    *
    * @link http://tools.ietf.org/html/rfc3986#section-4.3
    */
-  public function withUri(IUri $uri, bool $preserveHost = false): this;
+  public function withUri(IUri $uri, bool $preserve_host = false): this;
 }

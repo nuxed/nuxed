@@ -2,7 +2,7 @@ namespace Nuxed\Http\Client;
 
 use namespace HH\Asio;
 use namespace HH\Lib\{C, Dict, Math, Regex, Str};
-use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\{Exception, Message};
 
 final class CurlHttpClient extends HttpClient {
   public function __construct(HttpClientOptions $options) {
@@ -67,11 +67,11 @@ final class CurlHttpClient extends HttpClient {
 
     $method = $request->getMethod();
 
-    if ('POST' === $method) {
+    if (Message\HttpMethod::POST === $method) {
       // Use CURLOPT_POST to have browser-like POST-to-GET redirects for 301, 302 and 303
       $curlOptions[\CURLOPT_POST] = true;
     } else {
-      $curlOptions[\CURLOPT_CUSTOMREQUEST] = $method;
+      $curlOptions[\CURLOPT_CUSTOMREQUEST] = (string)$method;
     }
 
     if ($timeout < 1) {
@@ -81,7 +81,6 @@ final class CurlHttpClient extends HttpClient {
     if (!$request->hasHeader('accept-encoding')) {
       $curlOptions[\CURLOPT_ENCODING] = ''; // Enable HTTP compression
     }
-
 
     $headers = vec[];
     foreach ($request->getHeaders() as $name => $_values) {
@@ -96,16 +95,15 @@ final class CurlHttpClient extends HttpClient {
     }
     $curlOptions[\CURLOPT_HTTPHEADER] = $headers;
 
-    $content = await $request->getBody()->readAsync();
+    $content = await $request->getBody()->readAllAsync();
     if ('' !== $content) {
       $curlOptions[\CURLOPT_POSTFIELDS] = $content;
     }
 
     $fingerprint = $this->options['peer_fingerprint'] ?? dict[];
-    foreach ($fingerprint as $algo => $digest) {
-      if ($algo !== 'pin-sha256') {
-        throw new Exception\RequestException(
-          $request,
+    foreach ($fingerprint as $algorithm => $digest) {
+      if ($algorithm !== 'pin-sha256') {
+        throw new Exception\InvalidArgumentException(
           Str\format('%s supports only "pin-sha256" fingerprints.', __CLASS__),
         );
       }
@@ -116,11 +114,11 @@ final class CurlHttpClient extends HttpClient {
       );
     }
 
-    $bindto = $this->options['bindto'] ?? '0';
-    if (\file_exists($bindto)) {
-      $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bindto;
+    $bind_to = $this->options['bindto'] ?? '0';
+    if (\file_exists($bind_to)) {
+      $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
     } else {
-      $curlOptions[\CURLOPT_INTERFACE] = $bindto;
+      $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
     }
 
     $ch = \curl_init();
@@ -141,8 +139,7 @@ final class CurlHttpClient extends HttpClient {
             $opt
           );
 
-          throw new Exception\RequestException(
-            $request,
+          throw new Exception\InvalidArgumentException(
             Str\format('Curl option "%s" is not supported.', $const),
           );
         }

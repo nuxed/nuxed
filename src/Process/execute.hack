@@ -1,54 +1,97 @@
 namespace Nuxed\Process;
 
-use namespace HH\Lib\{C, Str, Vec};
+use Nuxed\Environment;
+use HH\Lib\Dict;
+use HH\Lib\Vec;
+use HH\Lib\OS;
+use HH\Lib\Str;
+use HH\Lib\IO;
+use HH\Lib\File;
+use HH\Lib\_Private\_OS;
 
-/**
- * Execute the given command, followed by the given arguments.
- *
- * @note: Arguments will be escaped.
- */
-async function execute(string $command, string ...$args): Awaitable<Result> {
-  $original_command = $command;
-  $command .= ' ';
-  $command .= $args
-    |> Vec\map(
-      $$,
-      $arg ==> !C\contains(vec['|', '&'], $arg) ? \escapeshellarg($arg) : $arg,
-    )
-    |> Str\join($$, ' ');
+async function execute(
+  string $command,
+  Container<string> $arguments = vec[],
+  ?string $working_directory = null,
+  KeyedContainer<string, string> $environment = dict[],
+  bool $escape = true,
+): Awaitable<(string, string)> {
+  if ($escape) {
+    $command = escape_command($command);
+    $arguments = Vec\map(
+      $arguments,
+      (string $argument): string ==> escape_argument($argument),
+    );
+  } else {
+    $arguments = vec<string>($arguments);
+  }
 
-  $spec = darray[
+  $commandline = Str\join(Vec\concat(vec[$command], $arguments), ' ');
+
+  if (Str\contains($commandline, "\0")) {
+    throw new Exception\PossibleAttackException('NULL byte detected.');
+  }
+
+  $working_directory = $working_directory ?? \getcwd();
+  if (!\is_dir($working_directory)) {
+    throw new Exception\RuntimeException('$working_directory does not exist.');
+  }
+
+  $pipes = varray[];
+  $descriptor = darray[
     1 => varray['pipe', 'w'],
     2 => varray['pipe', 'w'],
   ];
-  $pipes = varray[];
 
-  $proc = \proc_open($command, $spec, inout $pipes);
-  invariant($proc, 'Failed to execute: %s', $command);
+  $proc = \proc_open(
+    $commandline,
+    $descriptor,
+    inout $pipes,
+    $working_directory,
+    $environment,
+  );
+
+  if (!\is_resource($proc)) {
+    throw new Exception\RuntimeException('Failed to open a new process.');
+  }
 
   $stdout = $pipes[1];
   $stderr = $pipes[2];
-  \stream_set_blocking($stdout, false);
 
   $exit_code = -2;
-  $output = '';
+  $stdout_content = '';
+  $stderr_content = '';
+
   while (true) {
-    $chunk = \stream_get_contents($stdout);
-    $output .= $chunk;
+    $stdout_content .= \stream_get_contents($stdout);
+    $stderr_content .= \stream_get_contents($stderr);
     $status = \proc_get_status($proc);
     if ($status['pid'] && !$status['running']) {
-      $exit_code = $status['exitcode'];
+      $exit_code = (int)$status['exitcode'];
       break;
     }
+
     /* HHAST_IGNORE_ERROR[DontAwaitInALoop] */
     await \stream_await($stdout, \STREAM_AWAIT_READ);
+    /* HHAST_IGNORE_ERROR[DontAwaitInALoop] */
+    await \stream_await($stderr, \STREAM_AWAIT_READ);
   }
-  $output .= \stream_get_contents($stdout);
+
+  $stdout_content .= \stream_get_contents($stdout) as string;
+  $stderr_content .= \stream_get_contents($stderr) as string;
+
   \fclose($stdout);
   \fclose($stderr);
-
-  // Always returns -1 if we called `proc_get_status` first
   \proc_close($proc);
 
-  return new Result($original_command, $args, $exit_code, $output);
+  if ($exit_code !== 0) {
+    throw new Exception\FailedExecutionException(
+      $commandline,
+      $exit_code,
+      $stdout_content,
+      $stderr_content,
+    );
+  }
+
+  return tuple($stdout_content, $stderr_content);
 }

@@ -2,16 +2,19 @@ namespace Nuxed\Environment\_Private;
 
 use namespace HH\Lib\Str;
 use namespace Nuxed\{Environment, Filesystem};
+use namespace HH\Lib\File;
+use namespace HH\Lib\IO;
 
 /**
  * Load a .env file into the current environment.
  */
 async function load(string $file, bool $override = false): Awaitable<void> {
-  $file = new Filesystem\File($file);
-  $lines = await $file->lines();
+  $file = File\open_read_only($file);
+  $reader = new IO\BufferedReader($file);
+
   $lastOperation = async {
   };
-  foreach ($lines as $line) {
+  foreach ($reader->linesIterator() await as $line) {
     $lastOperation = async {
       await $lastOperation;
 
@@ -31,4 +34,5 @@ async function load(string $file, bool $override = false): Awaitable<void> {
   }
 
   await $lastOperation;
+  $file->close();
 }

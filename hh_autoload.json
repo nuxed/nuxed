@@ -1,23 +1,6 @@
 {
     "roots": [
-        "src/Asset",
-        "src/Cache",
-        "src/Configuration",
-        "src/Console",
-        "src/Crypto",
-        "src/DependencyInjection",
-        "src/Environment",
-        "src/EventDispatcher",
-        "src/Filesystem",
-        "src/Kernel",
-        "src/Http",
-        "src/Inflector",
-        "src/Json",
-        "src/Log",
-        "src/Process",
-        "src/Serializer",
-        "src/Stopwatch",
-        "src/Translation"
+        "src/"
     ],
     "devRoots": [
         "src/DevTools",

@@ -2,7 +2,7 @@ namespace Nuxed\Http\Message\_Private;
 
 use namespace HH\Lib\{C, Regex, Str};
 use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Message\Exception;
+use namespace Nuxed\Http\Exception;
 
 final class UriMarshaler {
   public function marshal(
@@ -97,9 +97,8 @@ final class UriMarshaler {
       '' !== $host &&
       '' !== Regex\replace($host, re"/(?:^\[)?[a-zA-Z0-9-:\]_]+\.?/", '')
     ) {
-      throw new Message\Exception\SuspiciousOperationException(
-        Str\format('Invalid Host "%s".', $host),
-      );
+      // Invalid Host
+      throw new Exception\ServerException(Message\StatusCode::BAD_REQUEST);
     }
 
     return $host;

@@ -8,7 +8,6 @@ final class ApcStore implements IStore {
   use StoreTrait;
 
   public function __construct(
-    private Serializer\ISerializer $serializer,
     private string $namespace = '',
     private int $defaultTtl = 0,
   ) {}
@@ -24,7 +23,6 @@ final class ApcStore implements IStore {
     $id = $this->getId($id, $this->namespace);
     $ttl = $ttl ?? $this->defaultTtl;
 
-    $value = $this->serializer->serialize<T>($value);
     if (null === $value) {
       return false;
     }
@@ -70,7 +68,7 @@ final class ApcStore implements IStore {
       );
     }
 
-    return $this->serializer->unserialize<T>($result);
+    return $result as T;
   }
 
   /**
@@ -80,7 +78,6 @@ final class ApcStore implements IStore {
     if (Str\is_empty($this->namespace)) {
       return \apc_clear_cache();
     }
-
 
     /* HH_IGNORE_ERROR[2049] */
     $iterator = new \APCIterator(

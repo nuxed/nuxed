@@ -2,18 +2,9 @@ namespace Nuxed\Cache;
 
 use namespace Nuxed\Log;
 
-final class Cache implements ICache, Log\ILoggerAware {
-  private Log\ILogger $logger;
+final class Cache implements ICache {
 
-  public function __construct(
-    protected Store\IStore $store,
-    ?Log\ILogger $logger = null,
-  ) {
-    $this->logger = $logger ?? new Log\NullLogger();
-  }
-
-  public function setLogger(Log\ILogger $logger): void {
-    $this->logger = $logger;
+  public function __construct(protected Store\IStore $store) {
   }
 
   /**
@@ -108,12 +99,6 @@ final class Cache implements ICache, Log\ILoggerAware {
     try {
       return await $fun();
     } catch (\Exception $e) {
-
-      $level = Log\LogLevel::ALERT;
-      if ($e is Exception\InvalidArgumentException) {
-        $level = Log\LogLevel::WARNING;
-      }
-
       if (!$e is Exception\IException) {
         $e = new Exception\RuntimeException(
           $e->getMessage(),
@@ -121,12 +106,6 @@ final class Cache implements ICache, Log\ILoggerAware {
           $e,
         );
       }
-
-      await $this->logger
-        ->log<mixed>($level, 'Cache Exception : {message}', dict[
-          'message' => $e->getMessage(),
-          'exception' => $e,
-        ]);
 
       throw $e;
     }

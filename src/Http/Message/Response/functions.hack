@@ -538,8 +538,7 @@ function text(
   int $status = Http\Message\StatusCode::OK,
   KeyedContainer<string, Container<string>> $headers = dict[],
 ): Message\Response {
-  $body = Message\Body\temporary();
-  $body->write($text);
+  $body = Message\Body\memory($text);
 
   return new Message\Response($status, _Private\inject_content_type_in_headers(
     'text/plain; charset=utf-8',
@@ -559,8 +558,7 @@ function html(
   int $status = Http\Message\StatusCode::OK,
   KeyedContainer<string, Container<string>> $headers = dict[],
 ): Message\Response {
-  $body = Message\Body\temporary();
-  $body->write($html);
+  $body = Message\Body\memory($html);
 
   return new Message\Response($status, _Private\inject_content_type_in_headers(
     'text/html; charset=utf8',
@@ -580,8 +578,7 @@ function xml(
   int $status = Http\Message\StatusCode::OK,
   KeyedContainer<string, Container<string>> $headers = dict[],
 ): Message\Response {
-  $body = Message\Body\temporary();
-  $body->write($xml);
+  $body = Message\Body\memory($xml);
 
   return new Message\Response($status, _Private\inject_content_type_in_headers(
     'application/xml; charset=utf8',
@@ -589,7 +586,6 @@ function xml(
   ))
     |> $$->withBody($body);
 }
-
 
 /**
  * Create a plain text response from a text file.
@@ -651,7 +647,6 @@ function xml_file(
     |> $$->withBody($body);
 }
 
-
 /**
  * Create a redirect response.
  *
@@ -670,7 +665,7 @@ function redirect(
     $uri->toString(),
   ];
 
-  return new Message\Response($status, $headers, Message\Body\temporary());
+  return new Message\Response($status, $headers);
 }
 
 /**
@@ -683,7 +678,7 @@ function empty(
   int $status = Http\Message\StatusCode::NO_CONTENT,
   KeyedContainer<string, Container<string>> $headers = dict[],
 ): Message\Response {
-  return new Message\Response($status, $headers, Message\Body\temporary());
+  return new Message\Response($status, $headers);
 }
 
 /**

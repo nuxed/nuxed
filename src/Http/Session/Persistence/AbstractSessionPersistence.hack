@@ -52,13 +52,7 @@ abstract class AbstractSessionPersistence implements ISessionPersistence {
 
   protected function createCookie(string $id, int $expires): Message\Cookie {
     return (new Message\Cookie($id))
-      ->withExpires(
-        $expires > 0
-          ? (new \DateTimeImmutable())->add(
-            new \DateInterval(Str\format('PT%dS', $expires)),
-          )
-          : null,
-      )
+      ->withExpires($expires > 0 ? $expires : null)
       ->withDomain($this->cookieOptions['domain'])
       ->withPath($this->cookieOptions['path'])
       ->withHttpOnly($this->cookieOptions['http_only'])

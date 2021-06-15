@@ -1,23 +1,28 @@
 namespace Nuxed\Console;
 
 use namespace HH;
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{C, Dict, Str, Vec};
 use namespace Nuxed\{Environment, EventDispatcher};
 
 /**
  * The `Application` class bootstraps and handles Input and Output to process and
  * run necessary commands.
  */
-class Application implements Command\Manager\IManager {
+class Application {
   /**
    * A decorator banner to `brand` the application.
    */
   protected string $banner = '';
 
   /**
-   * Command Manager to manage commands and command loaders.
+   * Store added commands until we inject them into the `Input` at runtime.
    */
-  protected Command\Manager\IManager $commandManager;
+  protected dict<string, Command\Command> $commands = dict[];
+
+  /**
+  * The `Loader` instances to use to lookup commands.
+  */
+  protected vec<Command\Loader\ILoader> $loaders = vec[];
 
   /**
    * Error Handler used to handle exceptions thrown during command execution.
@@ -45,7 +50,6 @@ class Application implements Command\Manager\IManager {
      */
     protected string $version = '',
   ) {
-    $this->commandManager = new Command\Manager\Manager();
     $this->errorHandler = new ErrorHandler\StandardErrorHandler();
   }
 
@@ -88,17 +92,14 @@ class Application implements Command\Manager\IManager {
   }
 
   /**
-   * Retrieve the `Command\Manager` instance attached to the application.
-   */
-  final public function getCommandManager(): Command\Manager\IManager {
-    return $this->commandManager;
-  }
-
-  /**
    * Add a `CommandLoader` to use for command discovery.
    */
   public function addLoader(Command\Loader\ILoader $loader): this {
-    $this->commandManager->addLoader($loader);
+    foreach ($loader->getNames() as $name) {
+      _Private\validate_command_name($name);
+    }
+
+    $this->loaders[] = $loader;
 
     return $this;
   }
@@ -107,7 +108,16 @@ class Application implements Command\Manager\IManager {
    * Add a `Command` to the application to be parsed by the `Input`.
    */
   public function add(Command\Command $command): this {
-    $this->commandManager->add($command);
+    if (!$command->isEnabled()) {
+      return $this;
+    }
+
+    _Private\validate_command_name($command->getName());
+    foreach ($command->getAliases() as $alias) {
+      _Private\validate_command_name($alias);
+    }
+
+    $this->commands[$command->getName()] = $command;
 
     return $this;
   }
@@ -116,14 +126,36 @@ class Application implements Command\Manager\IManager {
    * Returns true if the command exists, false otherwise.
    */
   public function has(string $name): bool {
-    return $this->commandManager->has($name);
+    if (C\contains_key($this->commands, $name)) {
+      return true;
+    }
+
+    foreach ($this->loaders as $loader) {
+      if ($loader->has($name)) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   /**
    * Returns a registered command by name or alias.
    */
   public function get(string $name): Command\Command {
-    return $this->commandManager->get($name);
+    if (C\contains_key($this->commands, $name)) {
+      return $this->commands[$name];
+    }
+
+    foreach ($this->loaders as $loader) {
+      if ($loader->has($name)) {
+        return $loader->get($name);
+      }
+    }
+
+    throw new Exception\CommandNotFoundException(
+      Str\format('The command "%s" does not exist.', $name),
+    );
   }
 
   /**
@@ -133,16 +165,77 @@ class Application implements Command\Manager\IManager {
    * match if you give it an abbreviation of a name or alias.
    */
   public function find(string $name): Command\Command {
-    return $this->commandManager->find($name);
+    foreach ($this->commands as $command) {
+      foreach ($command->getAliases() as $alias) {
+        if (!$this->has($alias)) {
+          $this->commands[$alias] = $command;
+        }
+      }
+    }
+
+    if ($this->has($name)) {
+      return $this->get($name);
+    }
+
+    $allCommands = Vec\keys($this->commands);
+    foreach ($this->loaders as $loader) {
+      $allCommands = Vec\concat($allCommands, $loader->getNames());
+    }
+
+    $message = Str\format('Command "%s" is not defined.', $name);
+    $alternatives = $this->findAlternatives($name, $allCommands);
+    if (!C\is_empty($alternatives)) {
+      // remove hidden commands
+      $alternatives = Vec\filter(
+        $alternatives,
+        (string $name): bool ==> !$this->get($name)->isHidden(),
+      );
+      if (1 === C\count($alternatives)) {
+        $message .= Str\format(
+          '%s%sDid you mean this?%s%s',
+          Output\IOutput::EndOfLine,
+          Output\IOutput::EndOfLine,
+          Output\IOutput::EndOfLine,
+          Output\IOutput::EndOfLine,
+        );
+      } else {
+        $message .= Str\format(
+          '%s%sDid you mean one of these?%s%s',
+          Output\IOutput::EndOfLine,
+          Output\IOutput::EndOfLine,
+          Output\IOutput::EndOfLine,
+          Output\IOutput::EndOfLine,
+        );
+      }
+
+      foreach ($alternatives as $alternative) {
+        $message .= Str\format(
+          '    - %s%s',
+          $alternative,
+          Output\IOutput::EndOfLine,
+        );
+      }
+    }
+
+    throw new Exception\CommandNotFoundException($message);
   }
 
   /**
    * Gets the commands.
    *
    * The container keys are the full names and the values the command instances.
-  */
+   */
   public function all(): KeyedContainer<string, Command\Command> {
-    return $this->commandManager->all();
+    $commands = $this->commands;
+    foreach ($this->loaders as $loader) {
+      foreach ($loader->getNames() as $name) {
+        if (!C\contains_key($commands, $name) && $this->has($name)) {
+          $commands[$name] = $this->get($name);
+        }
+      }
+    }
+
+    return $commands;
   }
 
   /**
@@ -162,7 +255,6 @@ class Application implements Command\Manager\IManager {
 
     return $this;
   }
-
 
   /**
    * Bootstrap the `Application` instance with default parameters and global
@@ -245,26 +337,22 @@ class Application implements Command\Manager\IManager {
     try {
       await $this->bootstrap($input, $output);
 
-      $commandName = $input->getActiveCommand();
-
       if ($input->getFlag('ansi')->getValue() === 1) {
         Terminal::setDecorated(true);
       } else if ($input->getFlag('no-ansi')->getValue() === 1) {
         Terminal::setDecorated(false);
       }
 
-      $flag = $input->getFlag('quiet');
       $verbositySet = false;
-      if ($flag->exists()) {
+      if ($input->getFlag('quiet')->exists()) {
         $verbositySet = true;
         Environment\put('SHELL_VERBOSITY', (string)Output\Verbosity::QUIET);
 
         $output->setVerbosity(Output\Verbosity::QUIET);
       }
 
-      if ($verbositySet === false) {
-        $flag = $input->getFlag('verbose');
-        $verbosity = $flag->getValue(0) as int;
+      if (!$verbositySet) {
+        $verbosity = $input->getFlag('verbose')->getValue(0) as int;
         switch ($verbosity) {
           case 0:
             $verbosity = Output\Verbosity::NORMAL;
@@ -284,6 +372,7 @@ class Application implements Command\Manager\IManager {
         $output->setVerbosity($verbosity);
       }
 
+      $commandName = $input->getActiveCommand();
       if ($commandName is null) {
         $input->parse();
         if ($input->getFlag('version')->getValue() === 1) {
@@ -455,5 +544,58 @@ class Application implements Command\Manager\IManager {
     }
 
     return $exitCode;
+  }
+
+  /**
+   * Finds alternative of $name among $collection.
+   */
+  private function findAlternatives(
+    string $name,
+    Container<string> $collection,
+  ): Container<string> {
+    $threshold = 1e3;
+    $alternatives = dict[];
+    $collectionParts = dict[];
+    foreach ($collection as $item) {
+      $collectionParts[$item] = Str\split($item, ':');
+    }
+
+    foreach (Str\split($name, ':') as $i => $subname) {
+      foreach ($collectionParts as $collectionName => $parts) {
+        $exists = C\contains_key($alternatives, $collectionName);
+        if (!C\contains_key($parts, $i)) {
+          if ($exists) {
+            $alternatives[$collectionName] += $threshold;
+          }
+
+          continue;
+        }
+
+        $lev = (float)\levenshtein($subname, $parts[$i]);
+        if (
+          $lev <= Str\length($subname) / 3 ||
+          '' !== $subname && Str\contains($parts[$i], $subname)
+        ) {
+          $alternatives[$collectionName] = $exists
+            ? $alternatives[$collectionName] + $lev
+            : $lev;
+        } else if ($exists) {
+          $alternatives[$collectionName] += $threshold;
+        }
+      }
+    }
+
+    foreach ($collection as $item) {
+      $lev = (float)\levenshtein($name, $item);
+      if ($lev <= Str\length($name) / 3 || Str\contains($item, $name)) {
+        $alternatives[$item] = C\contains_key($alternatives, $item)
+          ? $alternatives[$item] - $lev
+          : $lev;
+      }
+    }
+
+    return Dict\filter($alternatives, ($lev) ==> $lev < (2 * $threshold))
+      |> Dict\sort($$)
+      |> Vec\keys($$);
   }
 }

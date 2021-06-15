@@ -1,7 +1,7 @@
 namespace Nuxed\Http\Flash;
 
 use namespace HH\Lib\{C, Str};
-use namespace Nuxed\Http\Session;
+use namespace Nuxed\Http\{Exception, Session};
 use namespace Facebook\TypeAssert;
 
 final class FlashMessages implements IFlashMessages {
@@ -40,7 +40,7 @@ final class FlashMessages implements IFlashMessages {
     int $hops = 1,
   ): void {
     if ($hops < 1) {
-      throw new Exception\InvalidHopsValueException(Str\format(
+      throw new Exception\InvalidFlashHopsValueException(Str\format(
         'Hops value specified for flash message "%s" was too low; must be greater than 0, received %d',
         $key,
         $hops,
@@ -53,7 +53,7 @@ final class FlashMessages implements IFlashMessages {
       'hops' => $hops,
     );
 
-    // dict<shape('value' => mixed, 'hops' => int) is not
+    // dict<string, shape('value' => mixed, 'hops' => int)> is not
     // enforceable at runtime, use mixed instead.
     $this->session->put<mixed>($this->key, $messages);
   }

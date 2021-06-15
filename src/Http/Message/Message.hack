@@ -2,6 +2,7 @@ namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\{C, IO, Regex, Str, Vec};
 use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\Exception;
 
 /**
  * Abstract class implementing functionality common to requests and responses.

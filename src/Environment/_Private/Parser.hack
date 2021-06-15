@@ -7,20 +7,20 @@ final abstract class Parser {
   /**
    * Parse the given environment variable entry into a name and value.
    */
-  public static function parse(string $entry): (string, ?string) {
+  public static function parse(string $entry)[]: (string, ?string) {
     $name = $entry;
     $value = null;
     if (Str\contains($entry, '=')) {
       list($name, $value) = Vec\map(
         Str\split($entry, '=', 2),
-        ($str) ==> Str\trim($str),
+        (string $str)[]: string ==> Str\trim($str),
       );
     }
 
     return tuple(self::parseName($name), self::parseValue($value));
   }
 
-  public static function parseName(string $name): string {
+  public static function parseName(string $name)[]: string {
     if ($name === '') {
       throw new Exception\InvalidArgumentException(
         'Failed to parse environment variable name, name cannot be empty.',
@@ -30,6 +30,7 @@ final abstract class Parser {
     $name = Str\trim(
       Str\replace_every($name, dict['export ' => '', '\'' => '', '"' => '']),
     );
+
     if (!Regex\matches($name, re"~\A[a-zA-Z0-9_.]+\z~")) {
       throw new Exception\InvalidArgumentException(Str\format(
         'Failed to parse environment variable name, unexpected character encountered ( %s ).',
@@ -43,7 +44,7 @@ final abstract class Parser {
   /**
    * Strips quotes and comments from the environment variable value.
    */
-  public static function parseValue(?string $value): ?string {
+  public static function parseValue(?string $value)[]: ?string {
     if ($value === null || Str\trim($value) === '') {
       return null;
     }

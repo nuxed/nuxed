@@ -18,7 +18,7 @@ final class ServerRequest extends Request implements Message\IServerRequest {
   private ?Flash\IFlashMessages $flash = null;
 
   public function __construct(
-    string $method,
+    HttpMethod $method,
     Message\IUri $uri,
     KeyedContainer<string, Container<string>> $headers = dict[],
     ?IO\SeekableReadWriteHandle $body = null,
@@ -36,11 +36,7 @@ final class ServerRequest extends Request implements Message\IServerRequest {
     parent::__clone();
     $this->session = $this->session is nonnull ? clone $this->session : null;
     $this->flash = $this->flash is nonnull ? clone $this->flash : null;
-    $this->uploadedFiles = Dict\map<
-      string,
-      Message\IUploadedFile,
-      Message\IUploadedFile,
-    >(
+    $this->uploadedFiles = Dict\map(
       $this->uploadedFiles,
       (Message\IUploadedFile $file): Message\IUploadedFile ==> clone $file,
     );
