@@ -28,12 +28,10 @@
         "azjezz/http-normalizer": "^1.1"
     },
     "require-dev": {
-        "facebook/difflib": "^1.1.1",
         "facebook/fbexpect": "^2.7.7",
-        "facebook/hh-clilib": "^2.5.2",
-        "hhvm/hacktest": "^2.0",
-        "hhvm/hhast": "^4.82.2",
-        "hhvm/hhvm-autoload": "^3.1.6"
+        "hhvm/hacktest": "^2.2.3",
+        "hhvm/hhast": "^4.113.0",
+        "hhvm/hhvm-autoload": "^3.2.0"
     },
     "scripts": {
         "check": [
