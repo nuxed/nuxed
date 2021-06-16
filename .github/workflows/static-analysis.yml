@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ['macos-latest', 'ubuntu-latest']
+        os: ['ubuntu-latest']
         hhvm: ['4.113', 'latest']
         dependencies: ['lowest', 'highest', 'locked']
         experimental: [false]
@@ -40,3 +40,7 @@ jobs:
       - name: "running static analysis"
         continue-on-error: ${{ matrix.experimental }}
         run: "hh_client"
+
+      - name: "checking coding standards"
+        continue-on-error: ${{ matrix.experimental }}
+        run: "hhvm vendor/bin/hhast-lint"
