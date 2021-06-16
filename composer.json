@@ -23,15 +23,22 @@
     ],
     "require": {
         "hhvm": "~4.113.0 || ~4.114.0",
-        "hhvm/type-assert": "^4.1.2",
-        "facebook/hack-router": "^0.19.7",
+        "hhvm/type-assert": "^4.2.0",
+        "facebook/hack-router": "^0.19.8",
         "azjezz/http-normalizer": "^1.1"
     },
     "require-dev": {
-        "facebook/fbexpect": "^2.7.7",
+        "facebook/fbexpect": "^2.7.8",
         "hhvm/hacktest": "^2.2.3",
         "hhvm/hhast": "^4.113.0",
         "hhvm/hhvm-autoload": "^3.2.0"
+    },
+    "conflict": {
+        "hhvm/hsl": "<4.108.1",
+        "hhvm/hsl-experimental": "<4.108",
+        "facebook/hh-clilib": "<2.6.0",
+        "facebook/hack-http-request-response-interfaces": "<0.3",
+        "facebook/difflib": "<1.2"
     },
     "scripts": {
         "check": [
