@@ -22,7 +22,7 @@ function decode(string $json, bool $assoc = true)[]: dynamic {
   }
 
   if ($error is nonnull && \JSON_ERROR_NONE !== $error[0]) {
-    throw new Exception\JsonDecodeException(Errors[$error[0]], $error[0]);
+    throw new Exception\JsonDecodeException($error[1], $error[0]);
   }
 
   return $value;

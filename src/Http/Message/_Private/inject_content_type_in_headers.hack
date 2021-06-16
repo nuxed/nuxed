@@ -13,7 +13,7 @@ function inject_content_type_in_headers(
 
   $hasContentType = C\reduce_with_key(
     $headers,
-    ($carry, $key, $item) ==>
+    ($carry, $key, $_item) ==>
       $carry ?: (Str\lowercase($key) === 'content-type'),
     false,
   );

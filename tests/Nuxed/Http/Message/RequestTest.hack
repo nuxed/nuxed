@@ -1,25 +1,30 @@
 namespace Nuxed\Test\Http\Message;
 
 use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Message\Exception;
+use namespace Nuxed\Http\Exception;
 use type Facebook\HackTest\HackTest;
 use function Facebook\FBExpect\expect;
 
 class RequestTest extends HackTest {
   public function testRequestUriMayBeUri(): void {
     $uri = Message\uri('/');
-    $r = new Message\Request('GET', $uri);
+    $r = new Message\Request(Message\HttpMethod::GET, $uri);
     expect($r->getUri())->toBeSame($uri);
   }
 
   public async function testNullBody(): Awaitable<void> {
-    $r = new Message\Request('GET', Message\uri('/'), dict[], null);
-    $body = await $r->getBody()->readAsync();
+    $r = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('/'),
+      dict[],
+      null,
+    );
+    $body = await $r->getBody()->readAllAsync();
     expect($body)->toBeSame('');
   }
 
   public function testWithUri(): void {
-    $r1 = new Message\Request('GET', Message\uri('/'));
+    $r1 = new Message\Request(Message\HttpMethod::GET, Message\uri('/'));
     $u1 = $r1->getUri();
     $u2 = Message\uri('http://www.example.com');
     $r2 = $r1->withUri($u2);
@@ -29,13 +34,16 @@ class RequestTest extends HackTest {
   }
 
   public function testSameInstanceWhenSameUri(): void {
-    $r1 = new Message\Request('GET', Message\uri('http://foo.com'));
+    $r1 = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('http://foo.com'),
+    );
     $r2 = $r1->withUri($r1->getUri());
     expect($r2)->toBeSame($r1);
   }
 
   public function testWithRequestTarget(): void {
-    $r1 = new Message\Request('GET', Message\uri('/'));
+    $r1 = new Message\Request(Message\HttpMethod::GET, Message\uri('/'));
     $r2 = $r1->withRequestTarget('*');
     expect($r2->getRequestTarget())->toBeSame('*');
     expect($r1->getRequestTarget())->toBeSame('/');
@@ -43,7 +51,7 @@ class RequestTest extends HackTest {
 
   public function testRequestTargetDoesNotAllowSpaces(): void {
     expect(() ==> {
-      $r1 = new Message\Request('GET', Message\uri('/'));
+      $r1 = new Message\Request(Message\HttpMethod::GET, Message\uri('/'));
       $r1->withRequestTarget('/foo bar');
     })->toThrow(
       Exception\InvalidArgumentException::class,
@@ -52,27 +60,36 @@ class RequestTest extends HackTest {
   }
 
   public function testRequestTargetDefaultsToSlash(): void {
-    $r1 = new Message\Request('GET', Message\uri(''));
+    $r1 = new Message\Request(Message\HttpMethod::GET, Message\uri(''));
     expect($r1->getRequestTarget())->toBeSame('/');
-    $r2 = new Message\Request('GET', Message\uri('*'));
+    $r2 = new Message\Request(Message\HttpMethod::GET, Message\uri('*'));
     expect($r2->getRequestTarget())->toBeSame('*');
-    $r3 = new Message\Request('GET', Message\uri('http://foo.com/bar baz/'));
+    $r3 = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('http://foo.com/bar baz/'),
+    );
     expect($r3->getRequestTarget())->toBeSame('/bar%20baz/');
   }
 
   public function testBuildsRequestTarget(): void {
-    $r1 = new Message\Request('GET', Message\uri('http://foo.com/baz?bar=bam'));
+    $r1 = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('http://foo.com/baz?bar=bam'),
+    );
     expect($r1->getRequestTarget())->toBeSame('/baz?bar=bam');
   }
 
   public function testBuildsRequestTargetWithFalseyQuery(): void {
-    $r1 = new Message\Request('GET', Message\uri('http://foo.com/baz?0'));
+    $r1 = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('http://foo.com/baz?0'),
+    );
     expect($r1->getRequestTarget())->toBeSame('/baz?0');
   }
 
   public function testHostIsAddedFirst(): void {
     $r = new Message\Request(
-      'GET',
+      Message\HttpMethod::GET,
       Message\uri('http://foo.com/baz?bar=bam'),
       dict[
         'Foo' => vec['Bar'],
@@ -86,7 +103,7 @@ class RequestTest extends HackTest {
 
   public function testCanGetHeaderAsCsv(): void {
     $r = new Message\Request(
-      'GET',
+      Message\HttpMethod::GET,
       Message\uri('http://foo.com/baz?bar=bam'),
       dict[
         'Foo' => vec['a', 'b', 'c'],
@@ -98,7 +115,7 @@ class RequestTest extends HackTest {
 
   public function testHostIsNotOverwrittenWhenPreservingHost(): void {
     $r = new Message\Request(
-      'GET',
+      Message\HttpMethod::GET,
       Message\uri('http://foo.com/baz?bar=bam'),
       dict[
         'Host' => vec[
@@ -113,7 +130,7 @@ class RequestTest extends HackTest {
 
   public function testOverridesHostWithUri(): void {
     $r = new Message\Request(
-      'GET',
+      Message\HttpMethod::GET,
       Message\uri('https://docs.hhvm.com/hack?bar=bam'),
     );
     expect($r->getHeaders())->toBeSame(dict['Host' => vec['docs.hhvm.com']]);
@@ -123,7 +140,7 @@ class RequestTest extends HackTest {
 
   public function testUniqueAggregatesHeaders(): void {
     $r = new Message\Request(
-      'GET',
+      Message\HttpMethod::GET,
       Message\uri(''),
       dict[
         'ZOO' => vec['zoobar'],
@@ -135,19 +152,28 @@ class RequestTest extends HackTest {
   }
 
   public function testAddsPortToHeader(): void {
-    $r = new Message\Request('GET', Message\uri('http://foo.com:8124/bar'));
+    $r = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('http://foo.com:8124/bar'),
+    );
     expect($r->getHeaderLine('host'))->toBeSame('foo.com:8124');
   }
 
   public function testAddsPortToHeaderAndReplacePreviousPort(): void {
-    $r = new Message\Request('GET', Message\uri('http://foo.com:8124/bar'));
+    $r = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('http://foo.com:8124/bar'),
+    );
     $r = $r->withUri(Message\uri('http://foo.com:8125/bar'));
     expect($r->getHeaderLine('host'))->toBeSame('foo.com:8125');
   }
 
   public function testCannotHaveHeaderWithEmptyName(): void {
     expect(() ==> {
-      $r = new Message\Request('GET', Message\uri('https://example.com/'));
+      $r = new Message\Request(
+        Message\HttpMethod::GET,
+        Message\uri('https://example.com/'),
+      );
       $r = $r->withHeader('', vec['Bar']);
     })->toThrow(
       Exception\InvalidArgumentException::class,
@@ -156,7 +182,10 @@ class RequestTest extends HackTest {
   }
 
   public function testCanHaveHeaderWithEmptyValue(): void {
-    $r = new Message\Request('GET', Message\uri('https://example.com/'));
+    $r = new Message\Request(
+      Message\HttpMethod::GET,
+      Message\uri('https://example.com/'),
+    );
     $r = $r->withHeader('Foo', vec['']);
     expect($r->getHeader('Foo'))->toBeSame(vec['']);
   }

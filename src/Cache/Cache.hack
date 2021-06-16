@@ -1,7 +1,5 @@
 namespace Nuxed\Cache;
 
-use namespace Nuxed\Log;
-
 final class Cache implements ICache {
 
   public function __construct(protected Store\IStore $store) {

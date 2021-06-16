@@ -1,6 +1,6 @@
 namespace Nuxed\Test\EventDispatcher\Fixture;
 
-use namespace Nuxed\Contract\EventDispatcher;
+use namespace Nuxed\EventDispatcher;
 
 final class OrderCanceledEvent
   implements EventDispatcher\Event\IStoppableEvent {

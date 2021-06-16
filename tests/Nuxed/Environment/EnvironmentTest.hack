@@ -125,39 +125,39 @@ class EnvironmentTest extends HackTest\HackTest {
   public function testMode(): void {
     Environment\put('APP_MODE', 'test');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Test);
+      ->toBeSame(Environment\Mode::TEST);
 
     Environment\put('APP_MODE', 'prod');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Production);
+      ->toBeSame(Environment\Mode::PRODUCTION);
 
     Environment\put('APP_MODE', 'dev');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Development);
+      ->toBeSame(Environment\Mode::DEVELOPMENT);
 
     Environment\put('APP_MODE', 'deV');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Development);
+      ->toBeSame(Environment\Mode::DEVELOPMENT);
 
     Environment\put('APP_MODE', 'local');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Local);
+      ->toBeSame(Environment\Mode::LOCAL);
 
     Environment\put('APP_MODE', 'develop');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Development);
+      ->toBeSame(Environment\Mode::DEVELOPMENT);
 
     Environment\put('APP_MODE', 'Development');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Development);
+      ->toBeSame(Environment\Mode::DEVELOPMENT);
 
     Environment\put('APP_MODE', 'production');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Production);
+      ->toBeSame(Environment\Mode::PRODUCTION);
 
     Environment\put('APP_MODE', 'testing');
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Test);
+      ->toBeSame(Environment\Mode::TEST);
 
 
     Environment\put('APP_MODE', 'unknown');
@@ -189,7 +189,7 @@ class EnvironmentTest extends HackTest\HackTest {
     expect(Environment\contains('NE_DEV_MODE_LOADED'))
       ->toBeTrue();
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Development);
+      ->toBeSame(Environment\Mode::DEVELOPMENT);
 
     Environment\forget('APP_MODE');
     await Environment\bootstrap(__DIR__.'/env/prod/.env');
@@ -200,7 +200,7 @@ class EnvironmentTest extends HackTest\HackTest {
     expect(Environment\contains('NE_PROD_MODE_LOCAL_LOADED'))
       ->toBeTrue();
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Production);
+      ->toBeSame(Environment\Mode::PRODUCTION);
 
     Environment\forget('APP_MODE');
     await Environment\bootstrap(__DIR__.'/env/test/.env');
@@ -211,6 +211,6 @@ class EnvironmentTest extends HackTest\HackTest {
     expect(Environment\contains('NE_TEST_MODE_LOCAL_LOADED'))
       ->toBeFalse();
     expect(Environment\mode())
-      ->toBeSame(Environment\Mode::Test);
+      ->toBeSame(Environment\Mode::TEST);
   }
 }

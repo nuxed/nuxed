@@ -3,7 +3,7 @@ namespace Nuxed\Http\Routing\Matcher;
 use namespace HH\Lib\{C, Dict, Vec};
 use namespace Nuxed\Cache;
 use namespace Nuxed\Http\{Exception, Message, Routing};
-use Facebook\HackRouter;
+use namespace Facebook\HackRouter;
 
 final class Matcher implements IMatcher {
   private ?HackRouter\PrefixMatchingResolver<string> $resolver = null;

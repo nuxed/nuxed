@@ -13,7 +13,7 @@ class ResponseTest extends HackTest {
     expect($r->getProtocolVersion())->toBeSame('1.1');
     expect($r->getReasonPhrase())->toBeSame('OK');
     expect($r->getHeaders())->toBeEmpty();
-    $content = await $r->getBody()->readAsync();
+    $content = await $r->getBody()->readAllAsync();
     expect($content)->toBeSame('');
   }
 
@@ -32,19 +32,19 @@ class ResponseTest extends HackTest {
 
   public async function testCanConstructWithBody(): Awaitable<void> {
     $b = Message\Body\temporary();
-    await $b->writeAsync('baz');
-    await $b->seekAsync(0);
+    await $b->writeAllAsync('baz');
+    $b->seek(0);
 
     $r = new Message\Response(200, dict[], $b);
     $b = $r->getBody();
-    $content = await $b->readAsync();
+    $content = await $b->readAllAsync();
     expect($content)->toBeSame('baz');
   }
 
   public async function testNullBody(): Awaitable<void> {
     $r = new Message\Response(200, dict[], null);
     $b = $r->getBody();
-    $content = await $b->readAsync();
+    $content = await $b->readAllAsync();
     expect($content)->toBeSame('');
   }
 
@@ -88,11 +88,11 @@ class ResponseTest extends HackTest {
 
   public async function testWithBody(): Awaitable<void> {
     $b = Message\Body\temporary();
-    await $b->writeAsync('0');
-    await $b->seekAsync(0);
+    await $b->writeAllAsync('0');
+    $b->seek(0);
     $r = (new Message\Response())->withBody($b);
     expect($r->getBody())->toBeSame($b);
-    $content = await $r->getBody()->readAsync();
+    $content = await $r->getBody()->readAllAsync();
     expect($content)->toBeSame('0');
   }
 

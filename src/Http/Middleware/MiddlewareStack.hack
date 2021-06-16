@@ -1,7 +1,6 @@
 namespace Nuxed\Http\Middleware;
 
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Handler;
+use namespace Nuxed\Http\{Handler, Message};
 
 final class MiddlewareStack implements IMiddlewareStack {
   private \SplPriorityQueue<IMiddleware> $stack;

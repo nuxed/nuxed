@@ -70,7 +70,6 @@ final class FlashMessages implements IFlashMessages {
     $this->flash<T>($key, $value, $hops);
   }
 
-
   /**
    * Whether or not the container has the given key.
    */

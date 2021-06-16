@@ -1,8 +1,7 @@
 namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\{C, IO};
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Exception;
+use namespace Nuxed\Http\{Exception, Message};
 
 <<__Sealed(Response\JsonResponse::class)>>
 class Response

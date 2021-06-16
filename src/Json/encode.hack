@@ -15,7 +15,7 @@ function encode(mixed $value, bool $pretty = false, int $flags = 0): string {
   $error = null;
   $json = \json_encode_with_error($value, inout $error, $flags);
   if ($error is nonnull && \JSON_ERROR_NONE !== $error[0]) {
-    throw new Exception\JsonEncodeException(Errors[$error[0]], $error[0]);
+    throw new Exception\JsonEncodeException($error[1], $error[0]);
   }
 
   return $json;

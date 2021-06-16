@@ -124,7 +124,6 @@ class Request extends Message<IO\SeekableReadHandle> implements IRequest {
     return $this->uri;
   }
 
-
   /**
    * Returns an instance with the provided URI.
    *

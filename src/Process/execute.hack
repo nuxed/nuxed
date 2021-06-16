@@ -1,13 +1,6 @@
 namespace Nuxed\Process;
 
-use Nuxed\Environment;
-use HH\Lib\Dict;
-use HH\Lib\Vec;
-use HH\Lib\OS;
-use HH\Lib\Str;
-use HH\Lib\IO;
-use HH\Lib\File;
-use HH\Lib\_Private\_OS;
+use namespace HH\Lib\{Str, Vec};
 
 async function execute(
   string $command,

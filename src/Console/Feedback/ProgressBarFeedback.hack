@@ -71,7 +71,6 @@ final class ProgressBarFeedback extends AbstractFeedback {
       // pad the output to the terminal width
       |> Str\pad_right($$, $width);
 
-
     $cursor = null;
     if ($this->position is nonnull) {
       list($column, $row) = $this->position;

@@ -1,6 +1,5 @@
 namespace Nuxed\Http\Exception;
 
-use namespace HH\Lib\{C, Str, Vec};
 use namespace Nuxed\Http\Message;
 
 final class NotFoundException extends ServerException {

@@ -233,7 +233,6 @@ final class Uri implements Message\IUri {
     return $this->fragment;
   }
 
-
   /**
    * Return an instance with the specified scheme.
    *
@@ -413,7 +412,6 @@ final class Uri implements Message\IUri {
       : null;
 
     if (C\contains_key($parts, 'user')) {
-
       $this->userInfo = (string)$parts['user'];
 
       if (C\contains_key($parts, 'pass')) {

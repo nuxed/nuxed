@@ -1,8 +1,6 @@
 namespace Nuxed\Http\Event;
 
-use namespace Nuxed\EventDispatcher;
-use namespace Nuxed\Http\Exception;
-use namespace Nuxed\Http;
+use namespace Nuxed\{EventDispatcher, Http};
 
 /**
  * This event is dispatched if an exception is thrown while the request

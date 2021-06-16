@@ -1,9 +1,5 @@
 namespace Nuxed\Environment;
 
-use namespace HH\Lib\Filesystem;
-use namespace HH\Lib\File;
-use namespace HH\Lib\OS;
-
 use function file_exists;
 
 /**

@@ -1,8 +1,7 @@
 namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\File;
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Exception;
+use namespace Nuxed\Http\{Exception, Message};
 
 /**
  * Value object representing a file uploaded through an HTTP request.

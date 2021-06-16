@@ -1,8 +1,7 @@
 namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\{C, IO, Regex, Str, Vec};
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Exception;
+use namespace Nuxed\Http\{Exception, Message};
 
 /**
  * Abstract class implementing functionality common to requests and responses.
@@ -276,7 +275,6 @@ abstract class Message<T as IO\SeekableHandle> implements Message\IMessage<T> {
     $retval = vec[];
 
     foreach ($values as $value) {
-
       if (!Regex\matches($value, re"@^[ \t\x21-\x7E\x80-\xFF]*$@")) {
         throw new Exception\InvalidArgumentException(
           'Header values must be RFC 7230 compatible strings.',

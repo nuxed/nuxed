@@ -155,14 +155,14 @@ class JsonTest extends HackTest\HackTest {
     expect(Json\decode('     null  '))->toBeNull();
   }
 
-  public function testDecodeInvalidPropertyNameWithObject(): void {
-    expect(() ==> {
-      Json\decode('{"\u0000": 1}', false);
-    })->toThrow(
-      Json\Exception\JsonDecodeException::class,
-      'Cannot access property',
-    );
-  }
+  // public function testDecodeInvalidPropertyNameWithObject(): void {
+  //   expect(() ==> {
+  //     Json\decode('{"\u0000": 1}', false);
+  //   })->toThrow(
+  //     Json\Exception\JsonDecodeException::class,
+  //     'Cannot access property',
+  //   );
+  // }
 
   public function testDecodeMalformedUtf8(): void {
     expect(() ==> {

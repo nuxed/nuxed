@@ -1,6 +1,5 @@
 namespace Nuxed\Test\Http\Message;
 
-use namespace Nuxed\Contract\Http;
 use namespace Nuxed\Http\Message;
 use namespace Facebook\HackTest;
 
@@ -16,7 +15,7 @@ class CookieTest extends HackTest\HackTest {
       'www.facebook.com',
       true,
       true,
-      Http\Message\CookieSameSite::Strict,
+      Message\CookieSameSite::STRICT,
     );
     expect($cookie->getValue())->toBeSame('hello');
     expect($cookie->getExpires())->toBeSame(123);
@@ -25,9 +24,7 @@ class CookieTest extends HackTest\HackTest {
     expect($cookie->getDomain())->toBeSame('www.facebook.com');
     expect($cookie->getSecure())->toBeTrue();
     expect($cookie->getHttpOnly())->toBeTrue();
-    expect($cookie->getSameSite())->toBeSame(
-      Http\Message\CookieSameSite::Strict,
-    );
+    expect($cookie->getSameSite())->toBeSame(Message\CookieSameSite::STRICT);
   }
 
   public function testWithValue(): void {
@@ -56,13 +53,7 @@ class CookieTest extends HackTest\HackTest {
   }
 
   public function testWithDomain(): void {
-    $cookie = new Message\Cookie(
-      'waffle',
-      123,
-      456,
-      '/',
-      'thefacebook.com',
-    );
+    $cookie = new Message\Cookie('waffle', 123, 456, '/', 'thefacebook.com');
     $cookie2 = $cookie->withDomain('facebook.com');
     expect($cookie2)->toNotBeSame($cookie);
     expect($cookie2->getDomain())->toBeSame('facebook.com');
@@ -79,7 +70,15 @@ class CookieTest extends HackTest\HackTest {
   }
 
   public function testWithAndWithoutHttpOnly(): void {
-    $cookie = new Message\Cookie('waffle', null, null, null, null, false, false);
+    $cookie = new Message\Cookie(
+      'waffle',
+      null,
+      null,
+      null,
+      null,
+      false,
+      false,
+    );
     expect($cookie->getHttpOnly())->toBeFalse();
     $cookie2 = $cookie->withHttpOnly(true);
     expect($cookie2)->toNotBeSame($cookie);
@@ -99,8 +98,8 @@ class CookieTest extends HackTest\HackTest {
       false,
       null,
     );
-    $strict = Http\Message\CookieSameSite::Strict;
-    $lax = Http\Message\CookieSameSite::Lax;
+    $strict = Message\CookieSameSite::STRICT;
+    $lax = Message\CookieSameSite::LAX;
     expect($cookie->getSameSite())->toBeNull();
     $cookie2 = $cookie->withSameSite($strict);
     expect($cookie2)->toNotBeSame($cookie);

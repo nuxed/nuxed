@@ -1,7 +1,6 @@
 namespace Nuxed\Process;
 
-use HH\Lib\Regex;
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{Regex, Str};
 
 use const DIRECTORY_SEPARATOR;
 

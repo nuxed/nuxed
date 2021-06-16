@@ -1,7 +1,6 @@
 namespace Nuxed\Http\Middleware;
 
-use namespace Nuxed\Http\Handler;
-use namespace Nuxed\Http\Message;
+use namespace Nuxed\Http\{Handler, Message};
 
 /**
  * An HTTP middleware component participates in processing an HTTP message,

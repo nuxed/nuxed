@@ -1,7 +1,5 @@
 namespace Nuxed\Console\Exception;
 
-use type Exception as BuiltinException;
-
 <<__Sealed(
   CommandNotFoundException::class,
   InvalidArgumentException::class,
@@ -14,5 +12,5 @@ use type Exception as BuiltinException;
   RuntimeException::class,
 )>>
 interface Exception {
-  require extends BuiltinException;
+  require extends \Exception;
 }

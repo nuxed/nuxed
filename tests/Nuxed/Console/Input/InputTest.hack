@@ -46,7 +46,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Argument(
         'username',
         'The unique username of the user to delete',
-        Input\Definition\Mode::Required,
+        Input\Definition\Mode::REQUIRED,
       ),
     ];
     $input = $this->getInput('user:delete azjezz', $arguments);
@@ -65,7 +65,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Argument(
         'username',
         'The unique username of the user to delete',
-        Input\Definition\Mode::Required,
+        Input\Definition\Mode::REQUIRED,
       ),
     ];
 
@@ -86,7 +86,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Argument(
         'remote',
         'Remote host to push changes to, defaults to `origin`',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       ),
     ];
 
@@ -107,7 +107,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Option(
         'config',
         'The configuration file to use',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       ),
     ];
     $input = $this->getInput('lint --config=.hhast-lint.json', vec[], $options);
@@ -138,7 +138,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Option(
         'config',
         'The configuration file to use',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       ),
     ];
 
@@ -158,7 +158,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Option(
         'file',
         'The json file to validate',
-        Input\Definition\Mode::Required,
+        Input\Definition\Mode::REQUIRED,
       ),
     ];
     $input = $this->getInput('validate:json', vec[], $options);
@@ -176,7 +176,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Option(
         'port',
         'The port number to use',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       ),
     ];
     $input = $this->getInput('server:start', vec[], $options);
@@ -197,7 +197,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Flag(
         'dry-run',
         'Perform a dry run',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       ),
     ];
     $input = $this->getInput('database:create --dry-run', vec[], vec[], $flags);
@@ -233,7 +233,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Flag(
         'dry-run',
         'Perform a dry run',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       )
         |> $$->setAlias('d'),
     ];
@@ -254,7 +254,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Flag(
         'backup',
         'Whether or not the a backup should be create.',
-        Input\Definition\Mode::Required,
+        Input\Definition\Mode::REQUIRED,
       ),
     ];
     $input = $this->getInput('database:schema:update', vec[], vec[], $flags);
@@ -275,7 +275,7 @@ class InputTest extends HackTest\HackTest {
       new Input\Definition\Flag(
         'complete',
         'If defined, all assets of the database which are not relevant to the current metadata will be dropped.',
-        Input\Definition\Mode::Optional,
+        Input\Definition\Mode::OPTIONAL,
       ),
     ];
     $input = $this->getInput('database:schema:update', vec[], vec[], $flags);

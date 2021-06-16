@@ -1,7 +1,6 @@
 namespace Nuxed\Http\Event;
 
-use namespace Nuxed\EventDispatcher;
-use namespace Nuxed\Http;
+use namespace Nuxed\{EventDispatcher, Http};
 
 /**
  * This event is dispatched after the request has been handled.

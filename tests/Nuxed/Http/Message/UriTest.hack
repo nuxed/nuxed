@@ -1,5 +1,6 @@
 namespace Nuxed\Test\Http\Message;
 
+use namespace Nuxed\Http\Exception;
 use namespace Nuxed\Http\Message;
 use type Facebook\HackTest\HackTest;
 use type Facebook\HackTest\DataProvider;
@@ -86,7 +87,7 @@ class UriTest extends HackTest {
     expect(() ==> {
       new Message\Uri($invalidUri);
     })->toThrow(
-      Message\Exception\InvalidArgumentException::class,
+      Exception\InvalidArgumentException::class,
       'Unable to parse URI',
     );
   }
@@ -105,7 +106,7 @@ class UriTest extends HackTest {
     expect(() ==> {
       (new Message\Uri())->withPort(100000);
     })->toThrow(
-      Message\Exception\InvalidArgumentException::class,
+      Exception\InvalidArgumentException::class,
       'Invalid port: 100000. Must be between 1 and 65535',
     );
   }
@@ -114,7 +115,7 @@ class UriTest extends HackTest {
     expect(() ==> {
       (new Message\Uri())->withPort(0);
     })->toThrow(
-      Message\Exception\InvalidArgumentException::class,
+      Exception\InvalidArgumentException::class,
       'Invalid port: 0. Must be between 1 and 65535',
     );
   }
@@ -123,7 +124,7 @@ class UriTest extends HackTest {
     expect(() ==> {
       new Message\Uri('//example.com:0');
     })->toThrow(
-      Message\Exception\InvalidArgumentException::class,
+      Exception\InvalidArgumentException::class,
       'Unable to parse URI',
     );
   }

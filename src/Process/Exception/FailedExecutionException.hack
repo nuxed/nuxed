@@ -1,6 +1,6 @@
 namespace Nuxed\Process\Exception;
 
-use HH\Lib\Str;
+use namespace HH\Lib\Str;
 
 final class FailedExecutionException extends RuntimeException {
 

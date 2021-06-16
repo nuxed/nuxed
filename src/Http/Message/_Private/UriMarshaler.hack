@@ -1,8 +1,7 @@
 namespace Nuxed\Http\Message\_Private;
 
 use namespace HH\Lib\{C, Regex, Str};
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Exception;
+use namespace Nuxed\Http\{Exception, Message};
 
 final class UriMarshaler {
   public function marshal(

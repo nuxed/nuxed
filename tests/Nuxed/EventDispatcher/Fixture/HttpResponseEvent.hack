@@ -1,6 +1,6 @@
 namespace Nuxed\Test\EventDispatcher\Fixture;
 
-use namespace Nuxed\Contract\EventDispatcher;
+use namespace Nuxed\EventDispatcher;
 
 /**
  * An example of an immutable event object.

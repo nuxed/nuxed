@@ -1,9 +1,7 @@
 namespace Nuxed\Environment\_Private;
 
-use namespace HH\Lib\Str;
-use namespace Nuxed\{Environment, Filesystem};
-use namespace HH\Lib\File;
-use namespace HH\Lib\IO;
+use namespace HH\Lib\{File, IO, Str};
+use namespace Nuxed\Environment;
 
 /**
  * Load a .env file into the current environment.

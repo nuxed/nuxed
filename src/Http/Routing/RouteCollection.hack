@@ -1,8 +1,6 @@
 namespace Nuxed\Http\Routing;
 
-use namespace HH\Lib\{C, Dict, Str, Vec, KeySet};
-
-use function serialize_pure;
+use namespace HH\Lib\{C, Dict, Vec};
 
 final class RouteCollection {
   private dict<string, Route> $routes = dict[];

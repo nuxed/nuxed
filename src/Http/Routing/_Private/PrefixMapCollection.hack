@@ -1,6 +1,6 @@
 namespace Nuxed\Http\Routing\_Private;
 
-use namespace HH\Lib\{Dict, Str, Vec};
+use namespace HH\Lib\{Dict, Vec};
 use namespace Facebook\HackRouter;
 use namespace Nuxed\Http\{Message, Routing};
 

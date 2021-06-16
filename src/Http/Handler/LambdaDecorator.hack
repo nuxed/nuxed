@@ -1,7 +1,6 @@
 namespace Nuxed\Http\Handler;
 
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Handler;
+use namespace Nuxed\Http\{Handler, Message};
 
 final class LambdaDecorator implements Handler\IHandler {
   const type TLambda = (function(

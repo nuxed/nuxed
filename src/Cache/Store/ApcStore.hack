@@ -1,7 +1,6 @@
 namespace Nuxed\Cache\Store;
 
 use namespace HH\Lib\Str;
-use namespace Nuxed\Serializer;
 use namespace Nuxed\Cache\Exception;
 
 final class ApcStore implements IStore {
