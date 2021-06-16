@@ -1,6 +1,6 @@
 /vendor/
 /app/
+/.var/
 
-.var/
 *.hhast.parser-cache
 *.hack.parser-cache
