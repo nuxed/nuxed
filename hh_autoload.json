@@ -3,7 +3,6 @@
         "src/"
     ],
     "devRoots": [
-        "src/DevTools",
         "tests/"
     ],
     "devFailureHandler": "Facebook\\AutoloadMap\\HHClientFallbackHandler"

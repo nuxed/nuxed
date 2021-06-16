@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: ['macos-latest', 'ubuntu-latest']
-        hhvm: ['4.83', '4.84']
+        hhvm: ['4.113', 'latest']
         dependencies: ['lowest', 'highest', 'locked']
         experimental: [false]
 

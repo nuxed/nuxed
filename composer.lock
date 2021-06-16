@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cd9191f268b526aa7d7b1bc3b61ca9ca",
+    "content-hash": "2ce85315328825b4a5fc2174e8b01353",
     "packages": [
         {
             "name": "azjezz/http-normalizer",
@@ -46,95 +46,6 @@
                 "source": "https://github.com/azjezz/http-normalizer/tree/v1.1.0"
             },
             "time": "2020-12-13T02:04:35+00:00"
-        },
-        {
-            "name": "facebook/definition-finder",
-            "version": "v2.14.2",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hhvm/definition-finder.git",
-                "reference": "5f7708abaa7973387ddcc71ff00449852465bee4"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/definition-finder/zipball/5f7708abaa7973387ddcc71ff00449852465bee4",
-                "reference": "5f7708abaa7973387ddcc71ff00449852465bee4",
-                "shasum": ""
-            },
-            "require": {
-                "hhvm": "^4.78",
-                "hhvm/hhast": "^4.21.4",
-                "hhvm/hhvm-autoload": "^2.0|^3.0",
-                "hhvm/hsl": "^4.0",
-                "hhvm/type-assert": "^3.2|^4.0"
-            },
-            "require-dev": {
-                "facebook/fbexpect": "^2.6.1",
-                "hhvm/hacktest": "^2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Find definitions in PHP or Hack files. Useful for autoloaders.",
-            "homepage": "https://github.com/hhvm/definitions-finder",
-            "keywords": [
-                "autoload",
-                "definitions",
-                "hack",
-                "hhvm"
-            ],
-            "support": {
-                "issues": "https://github.com/hhvm/definition-finder/issues",
-                "source": "https://github.com/hhvm/definition-finder/tree/v2.14.2"
-            },
-            "time": "2021-05-03T19:37:09+00:00"
-        },
-        {
-            "name": "facebook/difflib",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hhvm/difflib.git",
-                "reference": "b697c0ac436629c8cd9627ab31a60777431f72f6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/difflib/zipball/b697c0ac436629c8cd9627ab31a60777431f72f6",
-                "reference": "b697c0ac436629c8cd9627ab31a60777431f72f6",
-                "shasum": ""
-            },
-            "require": {
-                "hhvm": "^4.8",
-                "hhvm/hsl": "^4.0"
-            },
-            "require-dev": {
-                "facebook/fbexpect": "^2.1.2",
-                "hhvm/hacktest": "^1.0",
-                "hhvm/hhast": "^4.0",
-                "hhvm/hhvm-autoload": "^2.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.x-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "support": {
-                "issues": "https://github.com/hhvm/difflib/issues",
-                "source": "https://github.com/hhvm/difflib/tree/v1.2.0"
-            },
-            "time": "2019-07-22T20:15:27+00:00"
         },
         {
             "name": "facebook/hack-http-request-response-interfaces",
@@ -215,100 +126,6 @@
                 "source": "https://github.com/hhvm/hack-router/tree/v0.19.8"
             },
             "time": "2020-12-18T22:55:23+00:00"
-        },
-        {
-            "name": "facebook/hh-clilib",
-            "version": "v2.6.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hhvm/hh-clilib.git",
-                "reference": "a275f2fe7e5c1144c09793fcb2a8f57533f2eb68"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hh-clilib/zipball/a275f2fe7e5c1144c09793fcb2a8f57533f2eb68",
-                "reference": "a275f2fe7e5c1144c09793fcb2a8f57533f2eb68",
-                "shasum": ""
-            },
-            "require": {
-                "hhvm": "^4.76",
-                "hhvm/hsl": "^4.0",
-                "hhvm/hsl-experimental": "^4.58.0rc1",
-                "hhvm/hsl-io": "^0.3.0",
-                "hhvm/type-assert": "^4.0"
-            },
-            "require-dev": {
-                "facebook/fbexpect": "^2.6.1",
-                "hhvm/hacktest": "^2.2.0rc1",
-                "hhvm/hhvm-autoload": "^3.1.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "support": {
-                "issues": "https://github.com/hhvm/hh-clilib/issues",
-                "source": "https://github.com/hhvm/hh-clilib/tree/v2.6.0"
-            },
-            "time": "2020-12-14T21:29:15+00:00"
-        },
-        {
-            "name": "hhvm/hhast",
-            "version": "v4.113.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/hhvm/hhast.git",
-                "reference": "14539efb5a8953b3428e39cbcbcb5461256e9008"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hhast/zipball/14539efb5a8953b3428e39cbcbcb5461256e9008",
-                "reference": "14539efb5a8953b3428e39cbcbcb5461256e9008",
-                "shasum": ""
-            },
-            "require": {
-                "facebook/difflib": "^1.0.0",
-                "facebook/hh-clilib": "^2.5.0rc1",
-                "hhvm": "^4.113",
-                "hhvm/hhvm-autoload": "^2.0.4|^3.0",
-                "hhvm/hsl": "^4.25",
-                "hhvm/hsl-experimental": "^4.58.0rc1",
-                "hhvm/hsl-io": "^0.2.0|0.3.0",
-                "hhvm/type-assert": "^3.0|^4.0"
-            },
-            "require-dev": {
-                "facebook/fbexpect": "^2.1.1",
-                "facebook/hack-codegen": "^4.0",
-                "hhvm/hacktest": "^2.2.0"
-            },
-            "bin": [
-                "bin/hhast-lint",
-                "bin/hhast-lint.hack",
-                "bin/hhast-migrate",
-                "bin/hhast-migrate.hack"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "4.x-dev"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "A mutable AST library for Hack with linting and code migrations",
-            "support": {
-                "issues": "https://github.com/hhvm/hhast/issues",
-                "source": "https://github.com/hhvm/hhast/tree/v4.113.0"
-            },
-            "time": "2021-06-08T21:23:11+00:00"
         },
         {
             "name": "hhvm/hhvm-autoload",
@@ -497,6 +314,46 @@
     ],
     "packages-dev": [
         {
+            "name": "facebook/difflib",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/difflib.git",
+                "reference": "b697c0ac436629c8cd9627ab31a60777431f72f6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/difflib/zipball/b697c0ac436629c8cd9627ab31a60777431f72f6",
+                "reference": "b697c0ac436629c8cd9627ab31a60777431f72f6",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm": "^4.8",
+                "hhvm/hsl": "^4.0"
+            },
+            "require-dev": {
+                "facebook/fbexpect": "^2.1.2",
+                "hhvm/hacktest": "^1.0",
+                "hhvm/hhast": "^4.0",
+                "hhvm/hhvm-autoload": "^2.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "support": {
+                "issues": "https://github.com/hhvm/difflib/issues",
+                "source": "https://github.com/hhvm/difflib/tree/v1.2.0"
+            },
+            "time": "2019-07-22T20:15:27+00:00"
+        },
+        {
             "name": "facebook/fbexpect",
             "version": "v2.7.8",
             "source": {
@@ -531,6 +388,48 @@
                 "source": "https://github.com/hhvm/fbexpect/tree/v2.7.8"
             },
             "time": "2020-12-11T21:53:22+00:00"
+        },
+        {
+            "name": "facebook/hh-clilib",
+            "version": "v2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/hh-clilib.git",
+                "reference": "a275f2fe7e5c1144c09793fcb2a8f57533f2eb68"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/hh-clilib/zipball/a275f2fe7e5c1144c09793fcb2a8f57533f2eb68",
+                "reference": "a275f2fe7e5c1144c09793fcb2a8f57533f2eb68",
+                "shasum": ""
+            },
+            "require": {
+                "hhvm": "^4.76",
+                "hhvm/hsl": "^4.0",
+                "hhvm/hsl-experimental": "^4.58.0rc1",
+                "hhvm/hsl-io": "^0.3.0",
+                "hhvm/type-assert": "^4.0"
+            },
+            "require-dev": {
+                "facebook/fbexpect": "^2.6.1",
+                "hhvm/hacktest": "^2.2.0rc1",
+                "hhvm/hhvm-autoload": "^3.1.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "support": {
+                "issues": "https://github.com/hhvm/hh-clilib/issues",
+                "source": "https://github.com/hhvm/hh-clilib/tree/v2.6.0"
+            },
+            "time": "2020-12-14T21:29:15+00:00"
         },
         {
             "name": "hhvm/hacktest",
@@ -579,6 +478,58 @@
                 "source": "https://github.com/hhvm/hacktest/tree/v2.2.3"
             },
             "time": "2020-12-14T21:52:12+00:00"
+        },
+        {
+            "name": "hhvm/hhast",
+            "version": "v4.113.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hhvm/hhast.git",
+                "reference": "14539efb5a8953b3428e39cbcbcb5461256e9008"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hhvm/hhast/zipball/14539efb5a8953b3428e39cbcbcb5461256e9008",
+                "reference": "14539efb5a8953b3428e39cbcbcb5461256e9008",
+                "shasum": ""
+            },
+            "require": {
+                "facebook/difflib": "^1.0.0",
+                "facebook/hh-clilib": "^2.5.0rc1",
+                "hhvm": "^4.113",
+                "hhvm/hhvm-autoload": "^2.0.4|^3.0",
+                "hhvm/hsl": "^4.25",
+                "hhvm/hsl-experimental": "^4.58.0rc1",
+                "hhvm/hsl-io": "^0.2.0|0.3.0",
+                "hhvm/type-assert": "^3.0|^4.0"
+            },
+            "require-dev": {
+                "facebook/fbexpect": "^2.1.1",
+                "facebook/hack-codegen": "^4.0",
+                "hhvm/hacktest": "^2.2.0"
+            },
+            "bin": [
+                "bin/hhast-lint",
+                "bin/hhast-lint.hack",
+                "bin/hhast-migrate",
+                "bin/hhast-migrate.hack"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A mutable AST library for Hack with linting and code migrations",
+            "support": {
+                "issues": "https://github.com/hhvm/hhast/issues",
+                "source": "https://github.com/hhvm/hhast/tree/v4.113.0"
+            },
+            "time": "2021-06-08T21:23:11+00:00"
         }
     ],
     "aliases": [],
