@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ee39caf0108b8f9fe21899e9217ac7a4",
+    "content-hash": "23af7040c36bfb7636d129c8838252fe",
     "packages": [
         {
             "name": "azjezz/http-normalizer",
@@ -481,16 +481,16 @@
         },
         {
             "name": "hhvm/hhast",
-            "version": "v4.113.0",
+            "version": "v4.113.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/hhvm/hhast.git",
-                "reference": "14539efb5a8953b3428e39cbcbcb5461256e9008"
+                "reference": "b1bee070a577536dccab711841f3e51b1ff45a06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/hhvm/hhast/zipball/14539efb5a8953b3428e39cbcbcb5461256e9008",
-                "reference": "14539efb5a8953b3428e39cbcbcb5461256e9008",
+                "url": "https://api.github.com/repos/hhvm/hhast/zipball/b1bee070a577536dccab711841f3e51b1ff45a06",
+                "reference": "b1bee070a577536dccab711841f3e51b1ff45a06",
                 "shasum": ""
             },
             "require": {
@@ -527,9 +527,9 @@
             "description": "A mutable AST library for Hack with linting and code migrations",
             "support": {
                 "issues": "https://github.com/hhvm/hhast/issues",
-                "source": "https://github.com/hhvm/hhast/tree/v4.113.0"
+                "source": "https://github.com/hhvm/hhast/tree/v4.113.1"
             },
-            "time": "2021-06-08T21:23:11+00:00"
+            "time": "2021-06-21T18:04:24+00:00"
         }
     ],
     "aliases": [],
@@ -538,8 +538,8 @@
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
-        "hhvm": "~4.113.0 || ~4.114.0"
+        "hhvm": "^4.113.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
