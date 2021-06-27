@@ -16,12 +16,11 @@ final class CurlHttpClient extends HttpClient {
    */
   <<__Override>>
   public async function process(
-    Message\Request $request,
-  ): Awaitable<Message\Response> {
+    Message\IRequest $request,
+  ): Awaitable<Message\IResponse> {
     $uri = $request->getUri();
 
-    $timeout = $this->options['timeout'] ??
-      (float)\ini_get('default_socket_timeout');
+    $timeout = $this->options['timeout'] ?? 60.0;
     $ciphers = $this->options['ciphers'] ?? null;
     if ($ciphers is nonnull) {
       $ciphers = Str\join($ciphers, ',')
@@ -95,7 +94,9 @@ final class CurlHttpClient extends HttpClient {
     }
     $curlOptions[\CURLOPT_HTTPHEADER] = $headers;
 
-    $content = await $request->getBody()->readAllAsync();
+    $body = $request->getBody();
+    $body->seek(0);
+    $content = await $body->readAllAsync();
     if ('' !== $content) {
       $curlOptions[\CURLOPT_POSTFIELDS] = $content;
     }
@@ -158,7 +159,7 @@ final class CurlHttpClient extends HttpClient {
     $size = (int)\curl_getinfo($ch, \CURLINFO_HEADER_SIZE);
     $content = Str\slice($result, $size);
 
-    $body = Message\Body\temporary();
+    $body = Message\Body\memory();
     await $body->writeAllAsync(Str\slice($result, $size));
     $body->seek(0); // rewind
     $response = $response->withBody($body);

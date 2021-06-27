@@ -31,7 +31,7 @@ class ResponseTest extends HackTest {
   }
 
   public async function testCanConstructWithBody(): Awaitable<void> {
-    $b = Message\Body\temporary();
+    $b = Message\Body\memory();
     await $b->writeAllAsync('baz');
     $b->seek(0);
 
@@ -87,7 +87,7 @@ class ResponseTest extends HackTest {
   }
 
   public async function testWithBody(): Awaitable<void> {
-    $b = Message\Body\temporary();
+    $b = Message\Body\memory();
     await $b->writeAllAsync('0');
     $b->seek(0);
     $r = (new Message\Response())->withBody($b);

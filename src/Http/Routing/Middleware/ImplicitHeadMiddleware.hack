@@ -49,7 +49,7 @@ final class ImplicitHeadMiddleware implements Middleware\IMiddleware {
           ),
       );
 
-      return $response->withBody(Message\Body\temporary());
+      return $response->withBody(Message\Body\memory());
     }
   }
 }

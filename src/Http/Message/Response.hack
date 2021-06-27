@@ -199,10 +199,10 @@ class Response
   <<__Override>>
   public function getBody(): IO\SeekableReadWriteHandle {
     if ($this->body is null) {
-      $this->body = Body\temporary();
+      $this->body = Body\memory();
     }
 
-    return $this->body as nonnull;
+    return $this->body;
   }
 
   private function assertValidStatusCode(int $code): void {

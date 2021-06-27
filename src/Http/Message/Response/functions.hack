@@ -18,7 +18,7 @@ function without_modifications(
 ): Http\Message\IResponse {
   $new = $response
     ->withStatus(304)
-    ->withBody(Message\Body\temporary());
+    ->withBody(Message\Body\memory());
 
   // remove headers that MUST NOT be included with 304 Not Modified responses
   foreach (

@@ -11,7 +11,7 @@ use namespace Nuxed\Http\Message;
  */
 final class NetworkException extends RuntimeException {
   public function __construct(
-    private Message\Request $request,
+    private Message\IRequest $request,
     string $message = '',
     int $code = 0,
     ?\Exception $previous = null,
@@ -22,11 +22,9 @@ final class NetworkException extends RuntimeException {
   /**
    * Returns the request.
    *
-   * The request object MAY be a different object from the one passed to IHttpClient::sendRequest()
-   *
-   * @return Message\Request
+   * The request object MAY be a different object from the one passed to IHttpClient::send()
    */
-  public function getRequest(): Message\Request {
+  public function getRequest(): Message\IRequest {
     return $this->request;
   }
 }

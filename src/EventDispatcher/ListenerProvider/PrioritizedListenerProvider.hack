@@ -9,9 +9,6 @@ final class PrioritizedListenerProvider implements IListenerProvider {
     vec<EventListener\IEventListener<Event\IEvent>>,
   >> $listeners = dict[];
 
-  /**
-   * {@inheritdoc}
-   */
   public function listen<<<__Enforceable>> reify T as Event\IEvent>(
     EventListener\IEventListener<T> $listener,
     int $priority = 1,

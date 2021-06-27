@@ -205,7 +205,7 @@ class Formatter extends AbstractFormatter implements IWrappableFormatter {
         continue;
       }
 
-      $effect = Str\capitalize(Str\lowercase($attribute));
+      $effect = Str\uppercase($attribute);
       if (!C\contains_key($effects, $effect)) {
         continue;
       }

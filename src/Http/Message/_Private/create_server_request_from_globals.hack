@@ -56,7 +56,7 @@ async function create_server_request_from_globals(
   );
 
   $input = IO\request_input();
-  $body = Message\Body\temporary();
+  $body = Message\Body\memory();
   await namespace\IO\copy($input, $body);
 
   return new Message\ServerRequest(

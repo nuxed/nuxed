@@ -159,10 +159,10 @@ class Request extends Message<IO\SeekableReadHandle> implements IRequest {
   <<__Override>>
   public function getBody(): IO\SeekableReadHandle {
     if ($this->body is null) {
-      $this->body = Body\temporary();
+      $this->body = Body\memory();
     }
 
-    return $this->body as nonnull;
+    return $this->body;
   }
 
   protected function updateHostFromUri(): void {

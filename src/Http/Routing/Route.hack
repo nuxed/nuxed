@@ -1,15 +1,23 @@
 namespace Nuxed\Http\Routing;
 
+use namespace HH\Lib\Str;
 use namespace Nuxed\Http\{Handler, Message};
 
 final class Route {
+  private string $name;
+
   public function __construct(
-    private string $name,
     private string $path,
     private Container<Message\HttpMethod> $methods,
     private Handler\IHandler $handler,
     private int $priority = 0,
-  )[] {}
+  )[] {
+    $this->name = Str\format(
+      '%s[%s]',
+      Str\replace($path, '/', '-'),
+      Str\join($methods, '|'),
+    );
+  }
 
   public function getName()[]: string {
     return $this->name;

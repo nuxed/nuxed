@@ -1,7 +1,7 @@
 namespace Nuxed\Http;
 
-use namespace Nuxed\{Cache, Environment, EventDispatcher};
-use namespace Nuxed\EventDispatcher\ListenerProvider;
+use namespace Nuxed\{Cache, Environment, EventDispatcher, Http};
+use namespace Nuxed\EventDispatcher\{Event, EventListener, ListenerProvider};
 
 final class Application
   implements
@@ -17,13 +17,13 @@ final class Application
   private Cache\ICache $cache;
   private Middleware\IMiddlewareStack $middleware;
   private EventDispatcher\IEventDispatcher $dispatcher;
-  private ListenerProvider\IListenerProvider $listenerProvider;
+  private ListenerProvider\PrioritizedListenerProvider $listenerProvider;
 
   public function __construct(
-    Container<Middleware\IMiddleware> $middleware = vec[],
-    ?Cache\ICache $cache = null,
-    ?Emitter\IEmitter $emitter = null,
     ?Routing\IRouter $router = null,
+    Container<Middleware\IMiddleware> $middleware = vec[],
+    ?Emitter\IEmitter $emitter = null,
+    ?Cache\ICache $cache = null,
     ?ListenerProvider\IListenerProvider $listenerProvider = null,
   ) {
     $this->middleware = new Middleware\MiddlewareStack();
@@ -52,6 +52,16 @@ final class Application
       ->stack(new Routing\Middleware\DispatchMiddleware(), -1002)
       ->stack(new Routing\Middleware\ImplicitHeadMiddleware(), -1003)
       ->stack(new Routing\Middleware\ImplicitOptionsMiddleware(), -1004);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function listen<<<__Enforceable>> reify T as Event\IEvent>(
+    EventListener\IEventListener<T> $listener,
+    int $priority = 1,
+  ): void {
+    $this->listenerProvider->listen<T>($listener, $priority);
   }
 
   public function addRoute(Routing\Route $route): this {
@@ -104,8 +114,8 @@ final class Application
     // - what if exception event listener throws?
     // ... etc.
 
-    $event = await $this->dispatcher->dispatch<Event\BeforeHandleEvent>(
-      new Event\BeforeHandleEvent($request),
+    $event = await $this->dispatcher->dispatch<Http\Event\BeforeHandleEvent>(
+      new Http\Event\BeforeHandleEvent($request),
     );
 
     if (!$event->hasResponse()) {
@@ -115,9 +125,10 @@ final class Application
           new Handler\NotFoundHandler(),
         );
       } catch (Exception\ServerException $e) {
-        $event = await $this->dispatcher->dispatch<Event\ServerExceptionEvent>(
-          new Event\ServerExceptionEvent($request, $e),
-        );
+        $event = await $this->dispatcher
+          ->dispatch<Http\Event\ServerExceptionEvent>(
+            new Http\Event\ServerExceptionEvent($request, $e),
+          );
 
         if ($event->hasResponse()) {
           $response = $event->getResponse();
@@ -125,8 +136,8 @@ final class Application
           $response = $e->toResponse();
         }
       } catch (\Exception $e) {
-        $event = await $this->dispatcher->dispatch<Event\ExceptionEvent>(
-          new Event\ExceptionEvent($request, $e),
+        $event = await $this->dispatcher->dispatch<Http\Event\ExceptionEvent>(
+          new Http\Event\ExceptionEvent($request, $e),
         );
 
         if ($event->hasResponse()) {
@@ -146,8 +157,8 @@ final class Application
       $response = $event->getResponse();
     }
 
-    $event = await $this->dispatcher->dispatch<Event\AfterHandleEvent>(
-      new Event\AfterHandleEvent($request, $response),
+    $event = await $this->dispatcher->dispatch<Http\Event\AfterHandleEvent>(
+      new Http\Event\AfterHandleEvent($request, $response),
     );
 
     return $event->getResponse();
@@ -175,16 +186,16 @@ final class Application
     ?Message\IServerRequest $request = null,
   ): Awaitable<bool> {
     $response = await $this->dispatcher
-      ->dispatch<Event\BeforeEmitEvent>(
-        new Event\BeforeEmitEvent($response, $request),
+      ->dispatch<Http\Event\BeforeEmitEvent>(
+        new Http\Event\BeforeEmitEvent($response, $request),
       )
       |> $$->getResponse();
 
     $emitted = await $this->emitter->emit($response);
 
     await $this->dispatcher
-      ->dispatch<Event\AfterEmitEvent>(
-        new Event\AfterEmitEvent($response, $emitted, $request),
+      ->dispatch<Http\Event\AfterEmitEvent>(
+        new Http\Event\AfterEmitEvent($response, $emitted, $request),
       );
 
     return $emitted;

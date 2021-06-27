@@ -4,7 +4,7 @@ use namespace Nuxed\Http\Message;
 
 final class MockHttpClient extends HttpClient {
   public function __construct(
-    private (function(Message\Request): Awaitable<Message\Response>) $handler,
+    private (function(Message\IRequest): Awaitable<Message\IResponse>) $handler,
     HttpClientOptions $options = shape(),
   ) {
     parent::__construct($options);
@@ -17,8 +17,8 @@ final class MockHttpClient extends HttpClient {
    */
   <<__Override>>
   public function process(
-    Message\Request $request,
-  ): Awaitable<Message\Response> {
+    Message\IRequest $request,
+  ): Awaitable<Message\IResponse> {
     return ($this->handler)($request);
   }
 }

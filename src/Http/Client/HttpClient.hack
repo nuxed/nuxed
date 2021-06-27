@@ -25,11 +25,14 @@ abstract class HttpClient implements IHttpClient {
    * contain the query string as well.
    */
   final public async function request(
-    Message\HttpMethod $method,
+    string $method,
     string $uri,
     HttpClientOptions $options = shape(),
-  ): Awaitable<Message\Response> {
-    $request = Message\request($method, Message\uri($uri))
+  ): Awaitable<Message\IResponse> {
+    $request = Message\request(
+      Message\HttpMethod::assert($method),
+      Message\uri($uri),
+    )
       |> $this->prepare($$, self::mergeOptions($this->options, $options));
     return await $this->process($request);
   }
@@ -40,13 +43,14 @@ abstract class HttpClient implements IHttpClient {
    * @throws Exception\IException If an error happens while processing the request.
    */
   final public async function send(
-    Message\Request $request,
+    Message\IRequest $request,
     HttpClientOptions $options = shape(),
-  ): Awaitable<Message\Response> {
+  ): Awaitable<Message\IResponse> {
     $request = $this->prepare(
       $request,
       self::mergeOptions($this->options, $options),
     );
+
     return await $this->process($request);
   }
 
@@ -54,9 +58,9 @@ abstract class HttpClient implements IHttpClient {
    * Prepare the request before execution.
    */
   final private function prepare(
-    Message\Request $request,
+    Message\IRequest $request,
     ?HttpClientOptions $options = null,
-  ): Message\Request {
+  ): Message\IRequest {
     $options ??= $this->options;
     if (C\contains($this->prepared, \spl_object_hash($request))) {
       return $request;
@@ -123,8 +127,8 @@ abstract class HttpClient implements IHttpClient {
    * @throws Exception\IException If an error happens while processing the request.
    */
   abstract protected function process(
-    Message\Request $request,
-  ): Awaitable<Message\Response>;
+    Message\IRequest $request,
+  ): Awaitable<Message\IResponse>;
 
   /**
    * Resolves a URL against a base URI.
@@ -238,29 +242,46 @@ abstract class HttpClient implements IHttpClient {
     $new = Shapes::toDict($new);
     $default = Shapes::toDict(static::DEFAULT_OPTIONS);
     $strSpec = TypeSpec\string();
-    $spec = TypeSpec\dict($strSpec, $strSpec);
-    $new['resolve'] = Dict\merge(
-      $spec->assertType($current['resolve'] ?? dict[]),
-      $spec->assertType($new['resolve'] ?? dict[]),
-    );
-    $spec = TypeSpec\vec($strSpec);
-    $new['ciphers'] = Vec\concat(
-      $spec->assertType($current['ciphers'] ?? vec[]),
-      $spec->assertType($new['ciphers'] ?? vec[]),
-    );
-    $spec = TypeSpec\dict($strSpec, $spec);
-    $new['headers'] = Dict\merge(
-      $spec->assertType($current['headers'] ?? dict[]),
-      $spec->assertType($new['headers'] ?? dict[]),
-    );
-    $new['peer_fingerprint'] = Dict\merge(
-      $spec->assertType($current['peer_fingerprint'] ?? dict[]),
-      $spec->assertType($new['peer_fingerprint'] ?? dict[]),
-    );
-    $options = Dict\merge($default, $current, $new);
+
+    if (C\contains_key($new, 'resolve')) {
+      $spec = TypeSpec\dict($strSpec, $strSpec);
+
+      $new['resolve'] = Dict\merge(
+        $spec->assertType($current['resolve'] ?? dict[]),
+        $spec->assertType($new['resolve'] ?? dict[]),
+      );
+    }
+
+    if (C\contains_key($new, 'ciphers')) {
+      $spec = TypeSpec\vec($strSpec);
+
+      $new['ciphers'] = Vec\concat(
+        $spec->assertType($current['ciphers'] ?? vec[]),
+        $spec->assertType($new['ciphers'] ?? vec[]),
+      );
+    }
+
+    if (C\contains_key($new, 'headers')) {
+      $spec = TypeSpec\dict($strSpec, TypeSpec\vec($strSpec));
+
+      $new['headers'] = Dict\merge(
+        $spec->assertType($current['headers'] ?? dict[]),
+        $spec->assertType($new['headers'] ?? dict[]),
+      );
+    }
+
+    if (C\contains_key($new, 'peer_fingerprint')) {
+      $spec = TypeSpec\dict($strSpec, TypeSpec\vec($strSpec));
+
+      $new['peer_fingerprint'] = Dict\merge(
+        $spec->assertType($current['peer_fingerprint'] ?? dict[]),
+        $spec->assertType($new['peer_fingerprint']),
+      );
+    }
+
     return TypeAssert\matches_type_structure(
       _Private\Structure::httpClientOptions(),
-      $options,
+      Dict\merge($default, $current, $new),
     );
   }
 

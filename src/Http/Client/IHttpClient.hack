@@ -18,9 +18,9 @@ interface IHttpClient {
    * @throws Exception\IException If an error happens while processing the request.
    */
   public function send(
-    Message\Request $request,
+    Message\IRequest $request,
     HttpClientOptions $options = shape(),
-  ): Awaitable<Message\Response>;
+  ): Awaitable<Message\IResponse>;
 
   /**
    * Create and send an HTTP request.
@@ -32,8 +32,8 @@ interface IHttpClient {
    * @throws Exception\IException If an error happens while processing the request.
    */
   public function request(
-    Message\HttpMethod $method,
+    string $method,
     string $uri,
     HttpClientOptions $options = shape(),
-  ): Awaitable<Message\Response>;
+  ): Awaitable<Message\IResponse>;
 }

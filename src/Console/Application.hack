@@ -337,6 +337,7 @@ class Application {
     try {
       await $this->bootstrap($input, $output);
 
+      $command_name = $input->getActiveCommand();
       if ($input->getFlag('ansi')->getValue() === 1) {
         Terminal::setDecorated(true);
       } else if ($input->getFlag('no-ansi')->getValue() === 1) {
@@ -372,9 +373,7 @@ class Application {
         $output->setVerbosity($verbosity);
       }
 
-      $commandName = $input->getActiveCommand();
-      if ($commandName is null) {
-        $input->parse();
+      if ($command_name is null) {
         if ($input->getFlag('version')->getValue() === 1) {
           await $this->renderVersionInformation($output);
           $exitCode = Command\ExitCode::SUCCESS;
@@ -384,7 +383,7 @@ class Application {
         }
 
       } else {
-        $command = $this->find($commandName);
+        $command = $this->find($command_name);
         $exitCode = await $this->runCommand($input, $output, $command);
       }
     } catch (\Throwable $exception) {
