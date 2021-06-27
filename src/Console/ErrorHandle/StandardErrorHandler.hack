@@ -6,7 +6,7 @@ use namespace HH\Lib\{C, Str, Vec};
 
 final class StandardErrorHandler implements IErrorHandler {
   /**
-   * Handle the given error and return the propoer exit code.
+   * Handle the given error and return the proper exit code.
    */
   public async function handle(
     Input\IInput $input,
@@ -98,7 +98,7 @@ final class StandardErrorHandler implements IErrorHandler {
       $lastOperation = async {
         await $io->writeln(
           '<fg=yellow>Exception trace: </>'.Output\IOutput::EndOfLine,
-          Output\Verbosity::VERY_VERBOS,
+          Output\Verbosity::VERY_VERBOSE,
         );
       };
 
@@ -117,7 +117,7 @@ final class StandardErrorHandler implements IErrorHandler {
         $lastOperation = async {
           await $lastOperation;
           await $io
-            ->writeln($call, Output\Verbosity::VERY_VERBOS);
+            ->writeln($call, Output\Verbosity::VERY_VERBOSE);
           await $io
             ->write(
               Str\format(
@@ -131,7 +131,7 @@ final class StandardErrorHandler implements IErrorHandler {
                 Output\IOutput::EndOfLine,
                 Output\IOutput::EndOfLine,
               ),
-              Output\Verbosity::VERY_VERBOS,
+              Output\Verbosity::VERY_VERBOSE,
             );
         };
       }

@@ -3,8 +3,8 @@ namespace Nuxed\Console;
 use namespace HH;
 use namespace HH\Lib\{C, Vec};
 
-function input(bool $strict = false): Input\IInput {
-  return new Input\Input(argv(), Terminal::getInputHandle(), $strict);
+function input(): Input\IInput {
+  return new Input\Input(argv(), Terminal::getInputHandle());
 }
 
 function output(

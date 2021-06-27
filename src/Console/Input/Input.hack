@@ -62,22 +62,12 @@ final class Input implements IInput {
    */
   protected IO\ReadHandle $stdin;
 
-  /**
-   * The 'strict' value of the `Input` object. If set to `true`, then any invalid
-   * parameters found in the input will throw an exception.
-   */
-  protected bool $strict = false;
-
   private IO\BufferedReader $reader;
 
   /**
    * Construct a new instance of Input
    */
-  public function __construct(
-    Container<string> $args,
-    IO\ReadHandle $stdin,
-    bool $strict = false,
-  ) {
+  public function __construct(Container<string> $args, IO\ReadHandle $stdin) {
     $args = Vec\filter($args, (string $arg)[]: bool ==> '' !== $arg);
     $this->stdin = $stdin;
     $this->reader = new IO\BufferedReader($stdin);
@@ -86,7 +76,6 @@ final class Input implements IInput {
     $this->flags = new Bag\FlagBag();
     $this->options = new Bag\OptionBag();
     $this->arguments = new Bag\ArgumentBag();
-    $this->strict = $strict;
   }
 
   /**
@@ -199,13 +188,6 @@ final class Input implements IInput {
   /**
    * {@inheritdoc}
    */
-  public function getStrict(): bool {
-    return $this->strict;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public async function getUserInput(?int $length = null): Awaitable<string> {
     if ($length is nonnull) {
       return await $this->reader->readFixedSizeAsync($length);
@@ -236,7 +218,7 @@ final class Input implements IInput {
         continue;
       }
 
-      if ($this->command is null && !Lexer::isArgument($val['raw'])) {
+      if ($this->command is null && !Lexer::isAnnotated($val['raw'])) {
         // If we haven't parsed a command yet, do so.
         $this->command = $val['value'];
         continue;
@@ -247,12 +229,6 @@ final class Input implements IInput {
       }
 
       $this->invalid[] = $val;
-    }
-
-    if ($this->command is null && $this->strict === true) {
-      throw new Console\Exception\InvalidNumberOfCommandsException(
-        'No command was parsed from the input.',
-      );
     }
 
     $this->parsed = true;
@@ -298,12 +274,14 @@ final class Input implements IInput {
       }
     }
 
-    if ($this->strict) {
-      foreach ($this->invalid as $value) {
-        throw new Console\Exception\RuntimeException(
-          Str\format('The `%s` parameter does not exist.', $value['raw']),
-        );
-      }
+    foreach ($this->invalid as $value) {
+      throw new Console\Exception\RuntimeException(
+        Str\format(
+          'The %s `%s` does not exist.',
+          Lexer::isAnnotated($value['raw']) ? 'option' : 'argument',
+          $value['raw'],
+        ),
+      );
     }
   }
 
@@ -405,7 +383,7 @@ final class Input implements IInput {
       );
     }
 
-    if (!$lexer->end() && Lexer::isArgument($nextValue['raw'])) {
+    if (!$lexer->end() && Lexer::isAnnotated($nextValue['raw'])) {
       throw new Console\Exception\MissingValueException(
         Str\format('No value is present for option %s.', $key),
       );
@@ -471,15 +449,6 @@ final class Input implements IInput {
    */
   public function setOptions(Bag\OptionBag $options): this {
     $this->options = $options;
-
-    return $this;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setStrict(bool $strict): this {
-    $this->strict = $strict;
 
     return $this;
   }

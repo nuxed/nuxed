@@ -58,11 +58,6 @@ interface IInput {
   public function getOptions(): Bag\OptionBag;
 
   /**
-   * Return whether the input instance is running in `strict` mode or not.
-   */
-  public function getStrict(): bool;
-
-  /**
    * Read in and return input from the user.
    */
   public function getUserInput(?int $length = null): Awaitable<string>;
@@ -101,9 +96,4 @@ interface IInput {
    * Set the options. This will override all existing options.
    */
   public function setOptions(Bag\OptionBag $options): this;
-
-  /**
-   * Set the strict value.
-   */
-  public function setStrict(bool $strict): this;
 }

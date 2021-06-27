@@ -21,7 +21,7 @@ final class Lexer
   protected int $position = 0;
 
   /**
-   * The current length of avaiable values remaining in the lexer.
+   * The current length of available values remaining in the lexer.
    */
   protected int $length = 0;
 
@@ -98,7 +98,7 @@ final class Lexer
    * Return whether the given value is representing notation for an argument.
    */
   <<__Memoize>>
-  public static function isArgument(string $value): bool {
+  public static function isAnnotated(string $value): bool {
     return static::isLong($value) || static::isShort($value);
   }
 
@@ -135,7 +135,7 @@ final class Lexer
   }
 
   /**
-   * Peek ahead to the next avaiable item without progressing the lexer.
+   * Peek ahead to the next available item without progressing the lexer.
    */
   public function peek(): ?shape(
     'raw' => string,
@@ -183,7 +183,7 @@ final class Lexer
   }
 
   /**
-   * Progress the lexer to its next avaiable item. If the item contains a value
+   * Progress the lexer to its next available item. If the item contains a value
    * an argument is representing, separate them and add the value back to the
    * available items to parse.
    */

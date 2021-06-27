@@ -22,19 +22,19 @@ class InputTest extends HackTest\HackTest {
   }
 
   public function testActiveCommandOnStrictMode(): void {
-    $input = $this->getInput('foo bar', vec[], vec[], vec[], true);
+    $input = $this->getInput('foo bar', vec[], vec[], vec[]);
     expect($input->getActiveCommand())->toBeSame('foo');
 
-    $input = $this->getInput('foo:bar', vec[], vec[], vec[], true);
+    $input = $this->getInput('foo:bar', vec[], vec[], vec[]);
     expect($input->getActiveCommand())->toBeSame('foo:bar');
 
-    $input = $this->getInput('', vec[], vec[], vec[], true);
+    $input = $this->getInput('', vec[], vec[], vec[]);
     expect(() ==> $input->getActiveCommand())->toThrow(
       Console\Exception\InvalidNumberOfCommandsException::class,
       'No command was parsed from the input.',
     );
 
-    $input = $this->getInput('--foo', vec[], vec[], vec[], true);
+    $input = $this->getInput('--foo', vec[], vec[], vec[]);
     expect(() ==> $input->getActiveCommand())->toThrow(
       Console\Exception\InvalidNumberOfCommandsException::class,
       'No command was parsed from the input.',
@@ -341,27 +341,13 @@ class InputTest extends HackTest\HackTest {
     expect($input->getFlag('baz'))->toBeSame($baz);
   }
 
-  public function testSetAndGetStrict(): void {
-    $input = $this->getInput('strict:test');
-    expect($input->getStrict())->toBeFalse();
-    $input->setStrict(true);
-    expect($input->getStrict())->toBeTrue();
-    $input->setStrict(false);
-    expect($input->getStrict())->toBeFalse();
-  }
-
   private function getInput(
     string $command,
     Container<Input\Definition\Argument> $arguments = vec[],
     Container<Input\Definition\Option> $options = vec[],
     Container<Input\Definition\Flag> $flags = vec[],
-    bool $strict = false,
   ): Input\Input {
-    $input = new Input\Input(
-      Str\split($command, ' '),
-      IO\request_input(),
-      $strict,
-    );
+    $input = new Input\Input(Str\split($command, ' '), IO\request_input());
     foreach ($arguments as $argument) {
       $input->addArgument($argument);
     }

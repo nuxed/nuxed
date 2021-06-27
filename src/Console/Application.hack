@@ -362,7 +362,7 @@ class Application {
             $verbosity = Output\Verbosity::VERBOSE;
             break;
           case 2:
-            $verbosity = Output\Verbosity::VERY_VERBOS;
+            $verbosity = Output\Verbosity::VERY_VERBOSE;
             break;
           default:
             $verbosity = Output\Verbosity::DEBUG;
