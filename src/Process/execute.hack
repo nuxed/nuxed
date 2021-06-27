@@ -1,6 +1,7 @@
 namespace Nuxed\Process;
 
-use namespace HH\Lib\{Str, Vec};
+use namespace HH\Asio;
+use namespace HH\Lib\{Dict, Str, Vec};
 
 async function execute(
   string $command,
@@ -36,6 +37,12 @@ async function execute(
     2 => varray['pipe', 'w'],
   ];
 
+  $environment = Dict\merge(
+    /* HH_IGNORE_ERROR[4323] */
+    \HH\global_get('_ENV') as \HH\KeyedTraversable<_, _>,
+    $environment,
+  );
+
   $proc = \proc_open(
     $commandline,
     $descriptor,
@@ -68,6 +75,8 @@ async function execute(
     await \stream_await($stdout, \STREAM_AWAIT_READ);
     /* HHAST_IGNORE_ERROR[DontAwaitInALoop] */
     await \stream_await($stderr, \STREAM_AWAIT_READ);
+    /* HHAST_IGNORE_ERROR[DontAwaitInALoop] */
+    await Asio\later();
   }
 
   $stdout_content .= \stream_get_contents($stdout) as string;

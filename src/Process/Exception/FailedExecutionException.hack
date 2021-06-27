@@ -11,7 +11,13 @@ final class FailedExecutionException extends RuntimeException {
     private string $stderr_content,
   ) {
     parent::__construct(
-      Str\format('Failed executing "%s" (exit: %d)', $command, $exit_code),
+      Str\format(
+        'Failed executing "%s" (exit: %d)%s%s',
+        $command,
+        $exit_code,
+        "\n",
+        $stderr_content,
+      ),
       $exit_code,
     );
   }

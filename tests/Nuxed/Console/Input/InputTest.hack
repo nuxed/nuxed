@@ -21,26 +21,6 @@ class InputTest extends HackTest\HackTest {
     expect($input->getActiveCommand())->toBeNull();
   }
 
-  public function testActiveCommandOnStrictMode(): void {
-    $input = $this->getInput('foo bar', vec[], vec[], vec[]);
-    expect($input->getActiveCommand())->toBeSame('foo');
-
-    $input = $this->getInput('foo:bar', vec[], vec[], vec[]);
-    expect($input->getActiveCommand())->toBeSame('foo:bar');
-
-    $input = $this->getInput('', vec[], vec[], vec[]);
-    expect(() ==> $input->getActiveCommand())->toThrow(
-      Console\Exception\InvalidNumberOfCommandsException::class,
-      'No command was parsed from the input.',
-    );
-
-    $input = $this->getInput('--foo', vec[], vec[], vec[]);
-    expect(() ==> $input->getActiveCommand())->toThrow(
-      Console\Exception\InvalidNumberOfCommandsException::class,
-      'No command was parsed from the input.',
-    );
-  }
-
   public function testArgument(): void {
     $arguments = vec[
       new Input\Definition\Argument(
