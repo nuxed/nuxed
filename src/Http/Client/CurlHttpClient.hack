@@ -122,31 +122,26 @@ final class CurlHttpClient extends HttpClient {
       $curlOptions[\CURLOPT_POSTFIELDS] = $content;
     }
 
-    if ($tcp_connection) {
-      $fingerprint = $options['peer_fingerprint'] ?? dict[];
-      foreach ($fingerprint as $algorithm => $digest) {
-        if ($algorithm !== 'pin-sha256') {
-          throw new Exception\InvalidArgumentException(
-            Str\format(
-              '%s supports only "pin-sha256" fingerprints.',
-              __CLASS__,
-            ),
-          );
-        }
-
-        $curlOptions[\CURLOPT_PINNEDPUBLICKEY] = Str\format(
-          'sha256//%s',
-          Str\join($digest, ';sha256//'),
+    $fingerprint = $options['peer_fingerprint'] ?? dict[];
+    foreach ($fingerprint as $algorithm => $digest) {
+      if ($algorithm !== 'pin-sha256') {
+        throw new Exception\InvalidArgumentException(
+          Str\format('%s supports only "pin-sha256" fingerprints.', __CLASS__),
         );
       }
 
-      if (Shapes::keyExists($options, 'bindto')) {
-        $bind_to = $options['bindto'];
-        if (\file_exists($bind_to)) {
-          $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
-        } else {
-          $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
-        }
+      $curlOptions[\CURLOPT_PINNEDPUBLICKEY] = Str\format(
+        'sha256//%s',
+        Str\join($digest, ';sha256//'),
+      );
+    }
+
+    if (Shapes::keyExists($options, 'bindto')) {
+      $bind_to = $options['bindto'];
+      if (\file_exists($bind_to)) {
+        $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
+      } else {
+        $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
       }
     }
 
@@ -194,7 +189,7 @@ final class CurlHttpClient extends HttpClient {
           Str\format('url=%s', $debug_information['url'] as string),
           Str\format(
             'content-type=%s',
-            ($debug_information['content_type'] ?? '[unknown]') as string,
+            ($debug_information['content_type'] ?? '[none]') as string,
           ),
           Str\format(
             'header-size=%d',
