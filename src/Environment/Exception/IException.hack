@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Environment\Exception;
 
 <<__Sealed(InvalidArgumentException::class, RuntimeException::class)>>

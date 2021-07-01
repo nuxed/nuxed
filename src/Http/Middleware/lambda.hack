@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Middleware;
 
 function lambda(LambdaDecorator::TLambda $lambda)[]: LambdaDecorator {

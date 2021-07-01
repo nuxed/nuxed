@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Session\Persistence;
 
 use namespace Nuxed\Http\{Message, Session};

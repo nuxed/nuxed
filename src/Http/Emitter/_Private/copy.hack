@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Emitter\_Private;
 
 use namespace HH\Lib\{IO, Str};

@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\ErrorHandler;
 
 use namespace Nuxed\Console\{Command, Exception, Input, Output, Style};

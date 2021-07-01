@@ -9,8 +9,7 @@
 
 namespace Nuxed\Test\Http\Client;
 
-use namespace Nuxed\Json;
-use namespace Nuxed\Environment;
+use namespace Nuxed\{Environment, Json};
 use namespace Nuxed\Http\{Client, Message};
 use namespace Facebook\HackTest;
 

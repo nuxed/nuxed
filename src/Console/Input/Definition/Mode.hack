@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\Input\Definition;
 
 enum Mode: int as int {

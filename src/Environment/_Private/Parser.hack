@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Environment\_Private;
 
 use namespace HH\Lib\{C, Regex, Str, Vec};

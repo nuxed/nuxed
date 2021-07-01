@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\_Private;
 
 use namespace HH\Lib\{Regex, Str};

@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Flash;
 
 use namespace HH\Lib\{C, Str};

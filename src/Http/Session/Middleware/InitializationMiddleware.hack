@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Session\Middleware;
 
 use namespace Nuxed\Http\{Handler, Message, Middleware, Session};

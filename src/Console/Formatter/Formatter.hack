@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\Formatter;
 
 use namespace HH\Lib\{C, PseudoRandom, Regex, Str, Vec};

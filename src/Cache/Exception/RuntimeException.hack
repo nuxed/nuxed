@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Cache\Exception;
 
 final class RuntimeException extends \RuntimeException implements IException {

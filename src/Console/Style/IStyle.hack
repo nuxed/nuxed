@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\Style;
 
 use namespace Nuxed\Console\{Feedback, Output, Table, Tree, UserInput};

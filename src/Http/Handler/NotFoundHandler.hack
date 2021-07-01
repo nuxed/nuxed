@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Handler;
 
 use namespace Nuxed\Http\{Exception, Handler, Message};

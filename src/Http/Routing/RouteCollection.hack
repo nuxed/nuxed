@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Routing;
 
 use namespace HH\Lib\{C, Dict, Vec};

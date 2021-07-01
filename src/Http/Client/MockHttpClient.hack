@@ -7,7 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
 namespace Nuxed\Http\Client;
 
 use namespace Nuxed\Http\Message;

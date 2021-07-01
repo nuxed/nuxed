@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\Input\Bag;
 
 use namespace Nuxed\Console\Input;

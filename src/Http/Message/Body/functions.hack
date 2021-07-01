@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Message\Body;
 
 use namespace HH\Lib\{File, IO};

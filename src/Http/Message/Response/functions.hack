@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Message\Response;
 
 use namespace HH\Lib\{C, Math, Str};

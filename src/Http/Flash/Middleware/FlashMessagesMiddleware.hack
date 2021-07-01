@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Http\Flash\Middleware;
 
 use namespace Nuxed\Http\{Flash, Handler, Message, Middleware};

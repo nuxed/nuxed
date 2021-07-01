@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Console\Event;
 
 use namespace Nuxed\Console\{Command, Input, Output};

@@ -7,8 +7,6 @@
  * file that was distributed with this source code.
  */
 
-
-
 namespace Nuxed\Process\Exception;
 
 final class PossibleAttackException extends RuntimeException {
