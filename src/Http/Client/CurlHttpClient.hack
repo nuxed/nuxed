@@ -1,3 +1,12 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Http\Client;
 
 use namespace HH\Asio;
@@ -5,10 +14,6 @@ use namespace HH\Lib\{C, Dict, Math, Regex, Str};
 use namespace Nuxed\Http\{Exception, Message};
 
 final class CurlHttpClient extends HttpClient {
-  public function __construct(HttpClientOptions $options) {
-    parent::__construct($options);
-  }
-
   /**
    * Process the request and returns a response.
    *
@@ -17,11 +22,12 @@ final class CurlHttpClient extends HttpClient {
   <<__Override>>
   public async function process(
     Message\IRequest $request,
+    HttpClientOptions $options,
   ): Awaitable<Message\IResponse> {
     $uri = $request->getUri();
 
-    $timeout = $this->options['timeout'] ?? 60.0;
-    $ciphers = $this->options['ciphers'] ?? null;
+    $timeout = $options['timeout'] ?? 60.0;
+    $ciphers = $options['ciphers'] ?? null;
     if ($ciphers is nonnull) {
       $ciphers = Str\join($ciphers, ',')
         |> $$ === '' ? null : $$;
@@ -36,22 +42,20 @@ final class CurlHttpClient extends HttpClient {
       \CURLOPT_FOLLOWLOCATION => true,
       \CURLOPT_RETURNTRANSFER => true,
       \CURLOPT_HEADER => true,
-      \CURLOPT_MAXREDIRS =>
-        Math\max(vec[0, $this->options['max_redirects'] ?? 0]),
+      \CURLOPT_MAXREDIRS => Math\max(vec[0, $options['max_redirects'] ?? 0]),
       \CURLOPT_COOKIEFILE => '', // Keep track of cookies during redirects
       \CURLOPT_CONNECTTIMEOUT_MS => 1000 * $timeout,
-      \CURLOPT_PROXY => $this->options['proxy'] ?? null,
-      \CURLOPT_NOPROXY => $this->options['no_proxy'] ?? '',
-      \CURLOPT_SSL_VERIFYPEER => $this->options['verify_peer'] ?? true,
-      \CURLOPT_SSL_VERIFYHOST =>
-        ($this->options['verify_host'] ?? true) ? 2 : 0,
-      \CURLOPT_CAINFO => $this->options['cafile'] ?? null,
-      \CURLOPT_CAPATH => $this->options['capath'] ?? null,
+      \CURLOPT_PROXY => $options['proxy'] ?? null,
+      \CURLOPT_NOPROXY => $options['no_proxy'] ?? '',
+      \CURLOPT_SSL_VERIFYPEER => $options['verify_peer'] ?? true,
+      \CURLOPT_SSL_VERIFYHOST => ($options['verify_host'] ?? true) ? 2 : 0,
+      \CURLOPT_CAINFO => $options['cafile'] ?? null,
+      \CURLOPT_CAPATH => $options['capath'] ?? null,
       \CURLOPT_SSL_CIPHER_LIST => $ciphers,
-      \CURLOPT_SSLCERT => $this->options['local_cert'] ?? null,
-      \CURLOPT_SSLKEY => $this->options['local_pk'] ?? null,
-      \CURLOPT_KEYPASSWD => $this->options['passphrase'] ?? null,
-      \CURLOPT_CERTINFO => $this->options['capture_peer_cert_chain'] ?? null,
+      \CURLOPT_SSLCERT => $options['local_cert'] ?? null,
+      \CURLOPT_SSLKEY => $options['local_pk'] ?? null,
+      \CURLOPT_KEYPASSWD => $options['passphrase'] ?? null,
+      \CURLOPT_CERTINFO => $options['capture_peer_cert_chain'] ?? null,
       \CURLOPT_HEADEROPT => \CURLHEADER_SEPARATE,
     ];
 
@@ -69,6 +73,8 @@ final class CurlHttpClient extends HttpClient {
     if (Message\HttpMethod::POST === $method) {
       // Use CURLOPT_POST to have browser-like POST-to-GET redirects for 301, 302 and 303
       $curlOptions[\CURLOPT_POST] = true;
+    } else if (Message\HttpMethod::HEAD === $method) {
+      $curlOptions[\CURLOPT_NOBODY] = true;
     } else {
       $curlOptions[\CURLOPT_CUSTOMREQUEST] = (string)$method;
     }
@@ -77,11 +83,11 @@ final class CurlHttpClient extends HttpClient {
       $curlOptions[\CURLOPT_NOSIGNAL] = true;
     }
 
-    if (!$request->hasHeader('accept-encoding')) {
-      $curlOptions[\CURLOPT_ENCODING] = ''; // Enable HTTP compression
+    $headers = vec[];
+    if (!$request->hasHeader('Accept-Encoding')) {
+      $headers[] = 'Accept-Encoding: gzip';
     }
 
-    $headers = vec[];
     foreach ($request->getHeaders() as $name => $_values) {
       $headers[] = Str\format('%s: %s', $name, $request->getHeaderLine($name));
     }
@@ -97,11 +103,11 @@ final class CurlHttpClient extends HttpClient {
     $body = $request->getBody();
     $body->seek(0);
     $content = await $body->readAllAsync();
-    if ('' !== $content) {
+    if ('' !== $content || Message\HttpMethod::POST === $request->getMethod()) {
       $curlOptions[\CURLOPT_POSTFIELDS] = $content;
     }
 
-    $fingerprint = $this->options['peer_fingerprint'] ?? dict[];
+    $fingerprint = $options['peer_fingerprint'] ?? dict[];
     foreach ($fingerprint as $algorithm => $digest) {
       if ($algorithm !== 'pin-sha256') {
         throw new Exception\InvalidArgumentException(
@@ -115,11 +121,19 @@ final class CurlHttpClient extends HttpClient {
       );
     }
 
-    $bind_to = $this->options['bindto'] ?? '0';
-    if (\file_exists($bind_to)) {
-      $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
-    } else {
-      $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
+    if (Shapes::keyExists($options, 'bindto')) {
+      $bind_to = $options['bindto'];
+      if (\file_exists($bind_to)) {
+        $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
+      } else {
+        $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
+      }
+    }
+
+    if (Shapes::keyExists($options, 'max_duration')) {
+      if (0 < $options['max_duration']) {
+        $curlOptions[\CURLOPT_TIMEOUT_MS] = 1000 * $options['max_duration'];
+      }
     }
 
     $ch = \curl_init();
@@ -150,25 +164,114 @@ final class CurlHttpClient extends HttpClient {
     $result = await Asio\curl_exec($ch);
     $error = \curl_error($ch);
     if ($error !== '') {
-      throw new Exception\NetworkException($request, $error);
+      throw new \Exception($error);
     }
 
-    $status = (int)\curl_getinfo($ch, \CURLINFO_RESPONSE_CODE);
-    $response = new Message\Response($status);
+    $debug_information = \curl_getinfo($ch);
+    if ($options['debug'] ?? false) {
+      $headers = dict[
+        'X-Nuxed-Debug' => vec[
+          Str\format('url=%s', $debug_information['url'] as string),
+          Str\format(
+            'content-type=%s',
+            $debug_information['content_type'] as string,
+          ),
+          Str\format(
+            'header-size=%d',
+            $debug_information['header_size'] as int,
+          ),
+          Str\format(
+            'request-size=%d',
+            $debug_information['request_size'] as int,
+          ),
+          Str\format('file-time=%d', $debug_information['filetime'] as int),
+          Str\format(
+            'redirect-count=%d',
+            $debug_information['redirect_count'] as int,
+          ),
+          Str\format(
+            'total-time=%f',
+            $debug_information['total_time'] as float,
+          ),
+          Str\format(
+            'namelookup-time=%f',
+            $debug_information['namelookup_time'] as float,
+          ),
+          Str\format(
+            'connect-time=%f',
+            $debug_information['connect_time'] as float,
+          ),
+          Str\format(
+            'pre-transfer-time=%f',
+            $debug_information['pretransfer_time'] as float,
+          ),
+          Str\format(
+            'start-transfer-time=%f',
+            $debug_information['starttransfer_time'] as float,
+          ),
+          Str\format(
+            'redirect-time=%f',
+            $debug_information['redirect_time'] as float,
+          ),
+          Str\format(
+            'redirect-url=%s',
+            ($debug_information['redirect_url'] ?? '[none]') as string,
+          ),
+          Str\format(
+            'upload-size=%f',
+            $debug_information['size_upload'] as float,
+          ),
+          Str\format(
+            'upload-speed=%f',
+            $debug_information['speed_upload'] as float,
+          ),
+          Str\format(
+            'upload-content-length=%f',
+            $debug_information['upload_content_length'] as float,
+          ),
+          Str\format(
+            'download-size=%f',
+            $debug_information['size_download'] as float,
+          ),
+          Str\format(
+            'download-speed=%f',
+            $debug_information['speed_download'] as float,
+          ),
+          Str\format(
+            'download-content-length=%f',
+            $debug_information['download_content_length'] as float,
+          ),
+        ],
+      ];
+    } else {
+      $headers = dict[];
+    }
 
-    $size = (int)\curl_getinfo($ch, \CURLINFO_HEADER_SIZE);
+    $response = new Message\Response(
+      $debug_information['http_code'] as int,
+      $headers,
+    );
+
+    $size = (int)$debug_information['header_size'];
     $content = Str\slice($result, $size);
+    \curl_close($ch);
 
     $body = Message\Body\memory();
     await $body->writeAllAsync(Str\slice($result, $size));
     $body->seek(0); // rewind
     $response = $response->withBody($body);
-    $headers = Str\split(Str\slice($result, 0, $size), "\n");
+    $response_headers = Str\trim_right(Str\slice($result, 0, $size), "\n\r");
+    $last_headers_set = C\lastx(Str\split($response_headers, "\n\r"));
+    $headers = Str\split($last_headers_set, "\n");
     foreach ($headers as $header) {
       if (!Str\contains($header, ':')) {
         if (Str\starts_with($header, 'HTTP')) {
           $header = Str\trim($header)
-            |> Str\slice($$, 0, Str\search($header, (string)$status))
+            |> Str\slice(
+              $$,
+              0,
+              Str\search($header, (string)$debug_information['http_code']),
+            )
             |> Str\trim($$);
 
           $response = Regex\first_match(
@@ -179,6 +282,7 @@ final class CurlHttpClient extends HttpClient {
             |> Str\contains($$, '.') ? $$ : ($$.'.0')
             |> $response->withProtocolVersion($$);
         }
+
         continue;
       }
 

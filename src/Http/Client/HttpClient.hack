@@ -1,3 +1,14 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+
+
 namespace Nuxed\Http\Client;
 
 use namespace HH\Lib\{C, Dict, Str, Vec};
@@ -5,11 +16,7 @@ use namespace Nuxed\Http\{Exception, Message};
 use namespace Facebook\{TypeAssert, TypeSpec};
 
 abstract class HttpClient implements IHttpClient {
-  private vec<string> $prepared = vec[];
-
-  public function __construct(protected HttpClientOptions $options = shape()) {
-    $this->setOptions($options);
-  }
+  public function __construct(private HttpClientOptions $options = shape()) {}
 
   final public static function create(
     HttpClientOptions $options = shape(),
@@ -29,12 +36,10 @@ abstract class HttpClient implements IHttpClient {
     string $uri,
     HttpClientOptions $options = shape(),
   ): Awaitable<Message\IResponse> {
-    $request = Message\request(
-      Message\HttpMethod::assert($method),
-      Message\uri($uri),
-    )
-      |> $this->prepare($$, self::mergeOptions($this->options, $options));
-    return await $this->process($request);
+    return await $this->send(
+      Message\request(Message\HttpMethod::assert($method), Message\uri($uri)),
+      $options,
+    );
   }
 
   /**
@@ -46,12 +51,10 @@ abstract class HttpClient implements IHttpClient {
     Message\IRequest $request,
     HttpClientOptions $options = shape(),
   ): Awaitable<Message\IResponse> {
-    $request = $this->prepare(
-      $request,
-      self::mergeOptions($this->options, $options),
-    );
+    $options = self::mergeOptions($this->options, $options);
+    $request = $this->prepare($request, $options);
 
-    return await $this->process($request);
+    return await $this->process($request, $options);
   }
 
   /**
@@ -59,12 +62,8 @@ abstract class HttpClient implements IHttpClient {
    */
   final private function prepare(
     Message\IRequest $request,
-    ?HttpClientOptions $options = null,
+    HttpClientOptions $options,
   ): Message\IRequest {
-    $options ??= $this->options;
-    if (C\contains($this->prepared, \spl_object_hash($request))) {
-      return $request;
-    }
     $uri = $request->getUri();
     $user = null;
     $password = null;
@@ -74,9 +73,9 @@ abstract class HttpClient implements IHttpClient {
       $user = $user_info[0];
       $password = $user_info[1] ?? null;
     }
-    if (!$request->hasHeader('authorization')) {
-      if ('' !== $user) {
-        $request = $request->withAddedHeader('authorization', vec[
+    if (!$request->hasHeader('Authorization')) {
+      if ($user is nonnull) {
+        $request = $request->withAddedHeader('Authorization', vec[
           Str\format(
             'Basic %s',
             \base64_encode($user.($password is null ? '' : ':'.$password)),
@@ -85,7 +84,7 @@ abstract class HttpClient implements IHttpClient {
       } else {
         $token = Shapes::idx($options, 'auth_bearer', null);
         if ($token is nonnull) {
-          $request = $request->withAddedHeader('authorization', vec[
+          $request = $request->withAddedHeader('Authorization', vec[
             Str\format('Bearer %s', $token),
           ]);
         }
@@ -116,9 +115,7 @@ abstract class HttpClient implements IHttpClient {
       $base = Message\uri($baseUri);
     }
 
-    $request = $request->withUri(self::resolveUrl($uri, $base));
-    $this->prepared[] = \spl_object_hash($request);
-    return $request;
+    return $request->withUri(self::resolveUrl($uri, $base));
   }
 
   /**
@@ -128,6 +125,7 @@ abstract class HttpClient implements IHttpClient {
    */
   abstract protected function process(
     Message\IRequest $request,
+    HttpClientOptions $options,
   ): Awaitable<Message\IResponse>;
 
   /**
@@ -141,15 +139,13 @@ abstract class HttpClient implements IHttpClient {
     Message\IUri $url,
     ?Message\IUri $base,
   ): Message\IUri {
-    if (
-      $base is nonnull &&
-      '' === ($base->getScheme() ?? '').($base->getAuthority() ?? '')
-    ) {
+    if ($base is nonnull && '' === ($base->getScheme().$base->getAuthority())) {
       throw new Exception\InvalidArgumentException(Str\format(
         'Invalid "base_uri" option: host or scheme is missing in "%s".',
         $base->toString(),
       ));
     }
+
     if ($base is null && '' === $url->getScheme().$url->getAuthority()) {
       throw new Exception\InvalidArgumentException(Str\format(
         'Invalid URL: no "base_uri" option was provided and host or scheme is missing in "%s".',
@@ -157,10 +153,10 @@ abstract class HttpClient implements IHttpClient {
       ));
     }
 
-    if ('' !== $url->getScheme()) {
+    if ($url->getScheme() is nonnull) {
       $url = $url->withPath(self::removeDotSegments($url->getPath()));
     } else {
-      if ('' !== $url->getAuthority()) {
+      if ($url->getAuthority() is nonnull) {
         $url = $url->withPath(self::removeDotSegments($url->getPath()));
       } else {
         if ('' === $url->getPath()) {
@@ -210,6 +206,7 @@ abstract class HttpClient implements IHttpClient {
    *
    * @see https://tools.ietf.org/html/rfc3986#section-5.2.4
    */
+  <<__Memoize>>
   private static function removeDotSegments(string $path): string {
     $result = '';
     while (!C\contains(vec['', '.', '..'], $path)) {
@@ -234,6 +231,7 @@ abstract class HttpClient implements IHttpClient {
     return $result;
   }
 
+  <<__Memoize>>
   private static function mergeOptions(
     HttpClientOptions $current,
     HttpClientOptions $new,
@@ -283,10 +281,5 @@ abstract class HttpClient implements IHttpClient {
       _Private\Structure::httpClientOptions(),
       Dict\merge($default, $current, $new),
     );
-  }
-
-  public function setOptions(HttpClientOptions $options): this {
-    $this->options = self::mergeOptions($this->options, $options);
-    return $this;
   }
 }

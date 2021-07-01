@@ -1,6 +1,7 @@
 {
   "roots": [
-    "src/"
+    "src/",
+    "tests/"
   ],
   "builtinLinters": "all",
   "disableAllAutoFixes": false,

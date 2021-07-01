@@ -1,8 +1,15 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Test\EventDispatcher\ListenerProvider;
 
-use namespace HH\Lib\C;
-use namespace HH\Lib\Vec;
-use namespace HH\Lib\Dict;
+use namespace HH\Lib\{C, Dict, Vec};
 use namespace Facebook\HackTest;
 use namespace Nuxed\Test\EventDispatcher\Fixture;
 use namespace Nuxed\EventDispatcher\ListenerProvider;
@@ -26,7 +33,6 @@ class PrioritizedListenerProviderTest extends HackTest\HackTest {
       new Fixture\OrderCreatedEventListener(),
     );
 
-    $event = new Fixture\OrderCanceledEvent('bar');
     $i = 0;
     foreach (
       $listenerProvider->getListeners<Fixture\OrderCanceledEvent>() await as
@@ -49,7 +55,6 @@ class PrioritizedListenerProviderTest extends HackTest\HackTest {
       new Fixture\OrderCreatedEventListener(),
     );
 
-    $event = new Fixture\OrderCanceledEvent('bar');
     $i = 0;
     foreach (
       $listenerProvider->getListeners<Fixture\OrderCanceledEvent>() await as
@@ -89,7 +94,6 @@ class PrioritizedListenerProviderTest extends HackTest\HackTest {
     $handlers = Dict\sort_by_key($handlers)
       |> vec($$)
       |> Vec\flatten($$);
-    $event = new Fixture\OrderCanceledEvent('id');
     $i = 0;
     foreach (
       $listenerProvider->getListeners<Fixture\OrderCanceledEvent>() await as

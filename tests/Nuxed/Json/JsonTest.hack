@@ -1,9 +1,15 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Test\Json;
 
-use namespace Facebook\TypeAssert;
-use namespace Facebook\TypeSpec;
-use namespace Nuxed\Util\Exception;
-use namespace Facebook\HackTest;
+use namespace Facebook\{HackTest, TypeSpec};
 use namespace Nuxed\Json;
 use function Facebook\FBExpect\expect;
 
@@ -22,16 +28,16 @@ class JsonTest extends HackTest\HackTest {
   public function testPrettyEncode(): void {
     expect(Json\encode(
       dict[
-        "name" => "nuxed/json",
-        "type" => "json",
-        "description" => "Nuxed Json - Encode/Decode Json Safely",
-        "keywords" => vec[
-          "hack",
-          "hhvm",
-          "json",
-          "nuxed",
+        'name' => 'nuxed/json',
+        'type' => 'json',
+        'description' => 'Nuxed Json - Encode/Decode Json Safely',
+        'keywords' => vec[
+          'hack',
+          'hhvm',
+          'json',
+          'nuxed',
         ],
-        "license" => "MIT",
+        'license' => 'MIT',
       ],
       true,
     ))->toBeSame('{
@@ -63,17 +69,17 @@ class JsonTest extends HackTest\HackTest {
     "license": "MIT"
 }',
     ))->toBeSame(dict[
-      "name" => "nuxed/framework",
-      "type" => "framework",
-      "description" =>
-        "Hack framework for building web applications with expressive, elegant syntax.",
-      "keywords" => vec[
-        "hack",
-        "hhvm",
-        "framework",
-        "nuxed",
+      'name' => 'nuxed/framework',
+      'type' => 'framework',
+      'description' =>
+        'Hack framework for building web applications with expressive, elegant syntax.',
+      'keywords' => vec[
+        'hack',
+        'hhvm',
+        'framework',
+        'nuxed',
       ],
-      "license" => "MIT",
+      'license' => 'MIT',
     ]);
   }
 
@@ -91,6 +97,9 @@ class JsonTest extends HackTest\HackTest {
     $b = $bSpec->assertType($decoded['b']);
     $cSpec = TypeSpec\vec(TypeSpec\string());
     $c = $cSpec->assertType($decoded['c']);
+
+    expect($b)->toBeSame(dict['a' => 'b']);
+    expect($c)->toBeSame(vec['a', 'b', 'c']);
   }
 
   public function testEncodeThrowsWithMalformedUtf8(): void {

@@ -1,10 +1,15 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Test\Console\Command;
 
-use namespace HH\Lib\C;
 use namespace Facebook\HackTest;
-use namespace Nuxed\Test\Fixture;
-use namespace Nuxed\Console\{Command, Exception};
-use function Facebook\FBExpect\expect;
 
 final class CommandTest extends HackTest\HackTest {
   public function testCommandThrowsForInvalidName(): void {

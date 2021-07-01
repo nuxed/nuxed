@@ -1,3 +1,12 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Test\Environment;
 
 use namespace Nuxed\Environment;
@@ -158,7 +167,6 @@ class EnvironmentTest extends HackTest\HackTest {
     Environment\put('APP_MODE', 'testing');
     expect(Environment\mode())
       ->toBeSame(Environment\Mode::TEST);
-
 
     Environment\put('APP_MODE', 'unknown');
     expect(() ==> {

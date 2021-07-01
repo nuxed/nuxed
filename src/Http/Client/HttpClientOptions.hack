@@ -1,3 +1,14 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
+
+
 namespace Nuxed\Http\Client;
 
 type HttpClientOptions = shape(
@@ -29,8 +40,12 @@ type HttpClientOptions = shape(
   // a comma separated list of hosts that do not require a proxy to be reached
   ?'no_proxy' => string,
 
-  // the inactivity timeout - defaults to ini_get('default_socket_timeout')
+  // the inactivity timeout - defaults to 60
   ?'timeout' => float,
+
+  // the maximum execution time for the request+response as a whole;
+  // a value lower than or equal to 0 means it is unlimited
+  ?'max_duration' => float,
 
   // the interface or the local socket to bind to - defaults to '0'
   ?'bindto' => string,
@@ -66,8 +81,13 @@ type HttpClientOptions = shape(
   //    the keys indicate the hashing algorithm name and each corresponding value is the expected digest.
   ?'peer_fingerprint' => KeyedContainer<string, Container<string>>,
 
-  // if set to TRUE a peer_certificate_chain context option will be created containing the certificate chain.
+  // if set to True, a peer_certificate_chain context option will be created containing the certificate chain.
   ?'capture_peer_cert_chain' => bool,
+
+  // if set to True, an additional `X-Nuxed-Debug` header will be added to the response
+  // containing debug information about request.
+  // each header value will use format of "information=value" ( e.g = "header-size=230" )
+  ?'debug' => bool,
 
   ...
 );

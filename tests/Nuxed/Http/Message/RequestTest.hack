@@ -1,7 +1,15 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Test\Http\Message;
 
-use namespace Nuxed\Http\Message;
-use namespace Nuxed\Http\Exception;
+use namespace Nuxed\Http\{Exception, Message};
 use type Facebook\HackTest\HackTest;
 use function Facebook\FBExpect\expect;
 

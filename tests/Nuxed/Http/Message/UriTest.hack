@@ -1,9 +1,16 @@
+/*
+ * This file is part of the Nuxed package.
+ *
+ * (c) Saif Eddin Gmati <azjezz@protonmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Nuxed\Test\Http\Message;
 
-use namespace Nuxed\Http\Exception;
-use namespace Nuxed\Http\Message;
-use type Facebook\HackTest\HackTest;
-use type Facebook\HackTest\DataProvider;
+use namespace Nuxed\Http\{Exception, Message};
+use type Facebook\HackTest\{DataProvider, HackTest};
 use function Facebook\FBExpect\expect;
 
 class UriTest extends HackTest {
@@ -326,11 +333,11 @@ class UriTest extends HackTest {
       ),
       // Don't encode unreserved chars or sub-delimiters
       tuple(
-        "/$unreserved?$unreserved#$unreserved",
-        "/$unreserved",
+        '/'.$unreserved.'?'.$unreserved.'#'.$unreserved,
+        '/'.$unreserved,
         $unreserved,
         $unreserved,
-        "/$unreserved?$unreserved#$unreserved",
+        '/'.$unreserved.'?'.$unreserved.'#'.$unreserved,
       ),
       // Encoded unreserved chars are not decoded
       tuple(
