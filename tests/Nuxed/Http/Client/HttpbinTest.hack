@@ -16,13 +16,17 @@ use namespace Facebook\HackTest;
 use function Facebook\FBExpect\expect;
 
 final class HttpbinTest extends HackTest\HackTest {
+  const type ExpectedStatusCode = int;
+  const type ExpectedHeaders = dict<string, vec<string>>;
+  const type ResponseInspector = (function(Message\IResponse): Awaitable<void>);
+
   <<HackTest\DataProvider('getRequests')>>
   public async function testRequest(
     Message\IRequest $request,
     Client\HttpClientOptions $options,
-    int $expected_status_code,
-    dict<string, vec<string>> $expected_headers,
-    ?(function(Message\IResponse): Awaitable<void>) $inspector = null,
+    this::ExpectedStatusCode $expected_status_code,
+    this::ExpectedHeaders $expected_headers,
+    ?this::ResponseInspector $inspector = null,
   ): Awaitable<void> {
     $httpbin = Environment\get('HTTPBIN_BASE_URI', 'https://httpbin.org')
       as string;
@@ -47,9 +51,9 @@ final class HttpbinTest extends HackTest\HackTest {
   public function getRequests(): dict<string, (
     Message\IRequest,
     Client\HttpClientOptions,
-    int,
-    dict<string, vec<string>>,
-    ?(function(Message\IResponse): Awaitable<void>),
+    this::ExpectedStatusCode,
+    this::ExpectedHeaders,
+    ?this::ResponseInspector,
   )> {
 
     $requests = dict[];
