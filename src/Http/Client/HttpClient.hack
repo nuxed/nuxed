@@ -8,7 +8,6 @@
  */
 
 
-
 namespace Nuxed\Http\Client;
 
 use namespace HH\Lib\{C, Dict, Str, Vec};
@@ -115,7 +114,9 @@ abstract class HttpClient implements IHttpClient {
       $base = Message\uri($baseUri);
     }
 
-    return $request->withUri(self::resolveUrl($uri, $base));
+    return $request->withUri(
+      self::resolveUrl($uri, $base, Shapes::keyExists($options, 'unix_socket')),
+    );
   }
 
   /**
@@ -138,6 +139,7 @@ abstract class HttpClient implements IHttpClient {
   private static function resolveUrl(
     Message\IUri $url,
     ?Message\IUri $base,
+    bool $has_unix_socket,
   ): Message\IUri {
     if ($base is nonnull && '' === ($base->getScheme().$base->getAuthority())) {
       throw new Exception\InvalidArgumentException(Str\format(
@@ -147,6 +149,10 @@ abstract class HttpClient implements IHttpClient {
     }
 
     if ($base is null && '' === $url->getScheme().$url->getAuthority()) {
+      if ($has_unix_socket) {
+        return $url;
+      }
+
       throw new Exception\InvalidArgumentException(Str\format(
         'Invalid URL: no "base_uri" option was provided and host or scheme is missing in "%s".',
         $url->toString(),

@@ -8,7 +8,6 @@
  */
 
 
-
 namespace Nuxed\Http\Message;
 
 use namespace HH\Lib\{C, Regex, Str};
@@ -301,8 +300,7 @@ final class Uri implements Message\IUri {
    * A null host value is equivalent to removing the host.
    */
   public function withHost(?string $host): this {
-    $host = $host is nonnull ? Str\lowercase($host) : null;
-
+    $host = $host is nonnull && $host !== '' ? Str\lowercase($host) : null;
     if ($this->host === $host) {
       return $this;
     }
@@ -470,7 +468,7 @@ final class Uri implements Message\IUri {
   }
 
   private function filterQueryAndFragment(?string $str): ?string {
-    if ($str is null) {
+    if ($str is null || $str === '') {
       return $str;
     }
 

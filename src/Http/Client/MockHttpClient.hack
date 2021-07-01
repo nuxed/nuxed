@@ -8,7 +8,6 @@
  */
 
 
-
 namespace Nuxed\Http\Client;
 
 use namespace Nuxed\Http\Message;

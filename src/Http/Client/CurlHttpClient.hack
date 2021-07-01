@@ -36,7 +36,6 @@ final class CurlHttpClient extends HttpClient {
     $curlOptions = dict[
       \CURLOPT_URL => $uri->toString(),
       \CURLOPT_USERAGENT => 'Nuxed HttpClient/Curl',
-      \CURLOPT_TCP_NODELAY => true,
       \CURLOPT_PROTOCOLS => \CURLPROTO_HTTP | \CURLPROTO_HTTPS,
       \CURLOPT_REDIR_PROTOCOLS => \CURLPROTO_HTTP | \CURLPROTO_HTTPS,
       \CURLOPT_FOLLOWLOCATION => true,
@@ -45,8 +44,7 @@ final class CurlHttpClient extends HttpClient {
       \CURLOPT_MAXREDIRS => Math\max(vec[0, $options['max_redirects'] ?? 0]),
       \CURLOPT_COOKIEFILE => '', // Keep track of cookies during redirects
       \CURLOPT_CONNECTTIMEOUT_MS => 1000 * $timeout,
-      \CURLOPT_PROXY => $options['proxy'] ?? null,
-      \CURLOPT_NOPROXY => $options['no_proxy'] ?? '',
+      \CURLOPT_HEADEROPT => \CURLHEADER_SEPARATE,
       \CURLOPT_SSL_VERIFYPEER => $options['verify_peer'] ?? true,
       \CURLOPT_SSL_VERIFYHOST => ($options['verify_host'] ?? true) ? 2 : 0,
       \CURLOPT_CAINFO => $options['cafile'] ?? null,
@@ -56,8 +54,25 @@ final class CurlHttpClient extends HttpClient {
       \CURLOPT_SSLKEY => $options['local_pk'] ?? null,
       \CURLOPT_KEYPASSWD => $options['passphrase'] ?? null,
       \CURLOPT_CERTINFO => $options['capture_peer_cert_chain'] ?? null,
-      \CURLOPT_HEADEROPT => \CURLHEADER_SEPARATE,
     ];
+
+    if (Shapes::keyExists($options, 'unix_socket')) {
+      if ($uri->getHost() is null) {
+        // if we have unix socket to connect to, the host is redundant, however, curl
+        // will fail if we don't provide a host
+        $curlOptions[\CURLOPT_URL] =
+          $uri->withScheme('http')->withHost('0.0.0.0')->toString();
+      }
+
+      $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $options['unix_socket'];
+      $tcp_connection = false;
+    } else {
+      $curlOptions[\CURLOPT_TCP_NODELAY] = true;
+      $curlOptions[\CURLOPT_PROXY] = $options['proxy'] ?? null;
+      $curlOptions[\CURLOPT_NOPROXY] = $options['no_proxy'] ?? '';
+
+      $tcp_connection = true;
+    }
 
     $protocolVersion = (float)$request->getProtocolVersion();
     if (1.0 === $protocolVersion) {
@@ -107,26 +122,31 @@ final class CurlHttpClient extends HttpClient {
       $curlOptions[\CURLOPT_POSTFIELDS] = $content;
     }
 
-    $fingerprint = $options['peer_fingerprint'] ?? dict[];
-    foreach ($fingerprint as $algorithm => $digest) {
-      if ($algorithm !== 'pin-sha256') {
-        throw new Exception\InvalidArgumentException(
-          Str\format('%s supports only "pin-sha256" fingerprints.', __CLASS__),
+    if ($tcp_connection) {
+      $fingerprint = $options['peer_fingerprint'] ?? dict[];
+      foreach ($fingerprint as $algorithm => $digest) {
+        if ($algorithm !== 'pin-sha256') {
+          throw new Exception\InvalidArgumentException(
+            Str\format(
+              '%s supports only "pin-sha256" fingerprints.',
+              __CLASS__,
+            ),
+          );
+        }
+
+        $curlOptions[\CURLOPT_PINNEDPUBLICKEY] = Str\format(
+          'sha256//%s',
+          Str\join($digest, ';sha256//'),
         );
       }
 
-      $curlOptions[\CURLOPT_PINNEDPUBLICKEY] = Str\format(
-        'sha256//%s',
-        Str\join($digest, ';sha256//'),
-      );
-    }
-
-    if (Shapes::keyExists($options, 'bindto')) {
-      $bind_to = $options['bindto'];
-      if (\file_exists($bind_to)) {
-        $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
-      } else {
-        $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
+      if (Shapes::keyExists($options, 'bindto')) {
+        $bind_to = $options['bindto'];
+        if (\file_exists($bind_to)) {
+          $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $bind_to;
+        } else {
+          $curlOptions[\CURLOPT_INTERFACE] = $bind_to;
+        }
       }
     }
 
@@ -164,7 +184,7 @@ final class CurlHttpClient extends HttpClient {
     $result = await Asio\curl_exec($ch);
     $error = \curl_error($ch);
     if ($error !== '') {
-      throw new \Exception($error);
+      throw new Exception\NetworkException($error);
     }
 
     $debug_information = \curl_getinfo($ch);
@@ -174,7 +194,7 @@ final class CurlHttpClient extends HttpClient {
           Str\format('url=%s', $debug_information['url'] as string),
           Str\format(
             'content-type=%s',
-            $debug_information['content_type'] as string,
+            ($debug_information['content_type'] ?? '[unknown]') as string,
           ),
           Str\format(
             'header-size=%d',

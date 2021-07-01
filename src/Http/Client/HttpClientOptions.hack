@@ -8,7 +8,6 @@
  */
 
 
-
 namespace Nuxed\Http\Client;
 
 type HttpClientOptions = shape(
@@ -83,6 +82,12 @@ type HttpClientOptions = shape(
 
   // if set to True, a peer_certificate_chain context option will be created containing the certificate chain.
   ?'capture_peer_cert_chain' => bool,
+
+  // If set, connection will be made to the unix domain socket instead of establishing a TCP connection to a host.
+  // Since no TCP connection is created, there's no need to resolve the DNS hostname in the URL.
+  //
+  // Note: proxy and DNS options such as "proxy", and "resolve" have no effect either as these are TCP-oriented.
+  ?'unix_socket' => string,
 
   // if set to True, an additional `X-Nuxed-Debug` header will be added to the response
   // containing debug information about request.
