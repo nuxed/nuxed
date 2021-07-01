@@ -1,4 +1,4 @@
-namespace Nuxed\Example\HttpClient\Request;
+namespace Nuxed\Example\HttpClient;
 
 use namespace Facebook\AutoloadMap;
 use namespace HH\Lib\{Str, IO};
@@ -6,7 +6,7 @@ use namespace Nuxed\Http\{Client, Message};
 use namespace Nuxed\Json;
 
 <<__EntryPoint>>
-async function main(): Awaitable<void> {
+async function unix(): Awaitable<void> {
   require_once __DIR__.'/../../vendor/autoload.hack';
 
   AutoloadMap\initialize();
