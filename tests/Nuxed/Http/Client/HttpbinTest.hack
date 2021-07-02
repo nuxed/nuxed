@@ -164,12 +164,7 @@ final class HttpbinTest extends HackTest\HackTest {
 
     // Status
     foreach ($common_methods as $method) {
-      foreach (Message\StatusCode::getValues() as $status) {
-        // skip 1xx and 3xx.
-        if ($status < 200 || ($status >= 300 && $status < 400)) {
-          continue;
-        }
-
+      foreach (vec[200, 201, 400, 401, 404, 500, 505] as $status) {
         $requests['status:'.$method.'-'.$status] = tuple(
           Message\request($method, Message\uri('/status/'.$status)),
           shape(),
@@ -216,8 +211,6 @@ final class HttpbinTest extends HackTest\HackTest {
         expect($content['user-agent'])->toContainSubstring('Nuxed');
       },
     );
-
-    return $requests;
 
     // Anything
     foreach ($common_methods as $method) {
