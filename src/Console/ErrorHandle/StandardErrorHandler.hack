@@ -71,7 +71,7 @@ final class StandardErrorHandler implements IErrorHandler {
     Style\IOutputStyle $io,
     \Throwable $exception,
   ): Awaitable<void> {
-    await $io->writeln(
+    await $io->writeLine(
       Str\format(
         '- %s:%d%s',
         $exception->getFile(),
@@ -105,7 +105,7 @@ final class StandardErrorHandler implements IErrorHandler {
 
     if (0 !== C\count($frames)) {
       $lastOperation = async {
-        await $io->writeln(
+        await $io->writeLine(
           '<fg=yellow>Exception trace: </>'.Output\IOutput::EndOfLine,
           Output\Verbosity::VERY_VERBOSE,
         );
@@ -126,7 +126,7 @@ final class StandardErrorHandler implements IErrorHandler {
         $lastOperation = async {
           await $lastOperation;
           await $io
-            ->writeln($call, Output\Verbosity::VERY_VERBOSE);
+            ->writeLine($call, Output\Verbosity::VERY_VERBOSE);
           await $io
             ->write(
               Str\format(

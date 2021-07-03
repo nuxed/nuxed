@@ -73,14 +73,14 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
    * Send output to the standard output stream with a new line charachter appended to the message.
    */
   <<__Override>>
-  public async function writeln(
+  public async function writeLine(
     string $message,
     Output\Verbosity $verbosity = Output\Verbosity::NORMAL,
     Output\Type $type = Output\Type::NORMAL,
   ): Awaitable<void> {
     concurrent {
-      await $this->output->writeln($message, $verbosity, $type);
-      await $this->buffer->writeln($message, $verbosity, $type);
+      await $this->output->writeLine($message, $verbosity, $type);
+      await $this->buffer->writeLine($message, $verbosity, $type);
     }
   }
 
@@ -149,7 +149,7 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
     ) {
       $lastOperation = async {
         await $lastOperation;
-        await $this->writeln($line, $verbosity);
+        await $this->writeLine($line, $verbosity);
       };
     }
 
@@ -165,7 +165,7 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
     Output\Verbosity $verbosity = Output\Verbosity::NORMAL,
   ): Awaitable<void> {
     await $this->autoPrependBlock($verbosity);
-    await $this->writeln(
+    await $this->writeLine(
       Str\format(
         '<comment>%s</>',
         $message, // Formatter\escape_trailing_backslash($message),
@@ -173,7 +173,7 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
       $verbosity,
     );
 
-    await $this->writeln(
+    await $this->writeLine(
       Str\format('<comment>%s</>', Str\repeat(
         '=',
         Str\length($this->output->format($message, Output\Type::PLAIN)),
@@ -193,7 +193,7 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
   ): Awaitable<void> {
     await $this->autoPrependBlock($verbosity);
 
-    await $this->writeln(
+    await $this->writeLine(
       Str\format(
         '<comment>%s</comment>',
         $message, //   Formatter\escape_trailing_backslash($message),
@@ -201,7 +201,7 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
       $verbosity,
     );
 
-    await $this->writeln(
+    await $this->writeLine(
       Str\format('<comment>%s</comment>', Str\repeat(
         '-',
         Str\length($this->output->format($message, Output\Type::PLAIN)),
@@ -220,7 +220,7 @@ final class Style extends Output\AbstractOutputWrapper implements IOutputStyle {
     Output\Verbosity $verbosity = Output\Verbosity::NORMAL,
   ): Awaitable<void> {
     await $this->autoPrepandText($verbosity);
-    await $this->writeln(Str\format(' %s', $message), $verbosity);
+    await $this->writeLine(Str\format(' %s', $message), $verbosity);
   }
 
   /**

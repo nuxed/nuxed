@@ -33,7 +33,7 @@ interface IOutput {
   /**
    * Send output to the standard output stream with a new line charachter appended to the message.
    */
-  public function writeln(
+  public function writeLine(
     string $message,
     Verbosity $verbosity = Verbosity::NORMAL,
     Type $type = Type::NORMAL,

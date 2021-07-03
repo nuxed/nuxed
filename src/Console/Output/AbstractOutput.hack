@@ -58,7 +58,7 @@ abstract class AbstractOutput implements IOutput {
   /**
    * {@inheritdoc}
    */
-  final public async function writeln(
+  final public async function writeLine(
     string $message,
     Verbosity $verbosity = Verbosity::NORMAL,
     Type $type = Type::NORMAL,

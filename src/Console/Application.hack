@@ -493,7 +493,7 @@ class Application {
       $name .= Str\format(' version <fg=yellow>%s</>', $version);
     }
 
-    await $output->writeln($name);
+    await $output->writeLine($name);
   }
 
   /**

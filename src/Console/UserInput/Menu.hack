@@ -41,7 +41,7 @@ final class Menu extends AbstractUserInput<string> {
         await $lastOperation;
 
         await $this->output
-          ->writeln(Str\format(
+          ->writeLine(Str\format(
             '%s  <fg=green>%s</>',
             0 === $i ? Output\IOutput::EndOfLine : '',
             $line,
@@ -52,21 +52,21 @@ final class Menu extends AbstractUserInput<string> {
     $lastOperation = async {
       await $lastOperation;
 
-      await $this->output->writeln('');
+      await $this->output->writeLine('');
     };
 
     foreach ($values as $index => $item) {
       $lastOperation = async {
         await $lastOperation;
         await $this->output
-          ->writeln(
+          ->writeLine(
             Str\format('  [<fg=yellow>%d</>] %s', $index + 1, (string)$item),
           );
       };
     }
 
     await $lastOperation;
-    await $this->output->writeln('');
+    await $this->output->writeLine('');
 
     $result = await $this->selection($values, $keys);
     if ($this->position is nonnull) {
@@ -98,7 +98,7 @@ final class Menu extends AbstractUserInput<string> {
 
       if ($input < 0 || $input >= C\count($values)) {
         await $this->output
-          ->writeln('<error>Invalid menu selection: out of range.</>');
+          ->writeLine('<error>Invalid menu selection: out of range.</>');
       }
     }
 

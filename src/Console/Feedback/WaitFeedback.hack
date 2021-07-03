@@ -79,7 +79,7 @@ final class WaitFeedback extends AbstractFeedback {
     await $this->output->erase();
 
     if ($finish) {
-      await $this->output->writeln($output);
+      await $this->output->writeLine($output);
     } else {
       await $this->output->write($output);
     }

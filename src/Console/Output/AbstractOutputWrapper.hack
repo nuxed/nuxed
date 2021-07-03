@@ -36,14 +36,14 @@ abstract class AbstractOutputWrapper implements IOutput {
   }
 
   /**
-   * Send output to the standard output stream with a new line charachter appended to the message.
+   * Send output to the standard output stream with a new line character appended to the message.
    */
-  public function writeln(
+  public function writeLine(
     string $message,
     Verbosity $verbosity = Verbosity::NORMAL,
     Type $type = Type::NORMAL,
   ): Awaitable<void> {
-    return $this->output->writeln($message, $verbosity, $type);
+    return $this->output->writeLine($message, $verbosity, $type);
   }
 
   /**
