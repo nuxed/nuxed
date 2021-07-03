@@ -36,24 +36,17 @@ final class EventDispatcher implements IEventDispatcher {
     // another subtype of T (type: To), which would result in a type error, because
     // we cannot assign type To to Lib\Ref::$value of type Ti.
     $event = new Lib\Ref<T>($event);
-    $lastOperation = async {
-    };
-
     foreach ($listeners await as $listener) {
-      $lastOperation = async {
-        await $lastOperation;
-        if (
-          $event->value is Event\IStoppableEvent &&
-          $event->value->isPropagationStopped()
-        ) {
-          return;
-        }
+      if (
+        $event->value is Event\IStoppableEvent &&
+        $event->value->isPropagationStopped()
+      ) {
+        return $event->value;
+      }
 
-        $event->value = await $listener->process($event->value);
-      };
+      $event->value = await $listener->process($event->value);
     }
 
-    await $lastOperation;
     return $event->value;
   }
 }
