@@ -44,7 +44,7 @@ final class MemoryStore implements IStore {
       return false;
     }
 
-    list($expiration_time, $value) = $this->data[$id];
+    list($expiration_time, $_value) = $this->data[$id];
     if ($expiration_time > \time()) {
       return true;
     }
