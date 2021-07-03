@@ -22,7 +22,7 @@
         "framework"
     ],
     "require": {
-        "hhvm": "^4.111.0",
+        "hhvm": "^4.113.0",
         "hhvm/type-assert": "^4.2.0",
         "facebook/hack-router": "^0.19.8",
         "azjezz/http-normalizer": "^1.1"
