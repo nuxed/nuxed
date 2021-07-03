@@ -12,27 +12,33 @@ namespace Nuxed\Console\Event;
 use namespace Nuxed\Console\{Command, Input, Output};
 
 /**
- * Allows to manipulate the exit code of a command after its execution.
+ * Allows to handle throwables thrown while running a command.
  */
-final class TerminateEvent extends Event {
-  private int $exitCode;
+final class ExceptionEvent extends Event {
+  private ?int $exitCode;
 
   public function __construct(
     Input\IInput $input,
     Output\IOutput $output,
+    private \Exception $exception,
     ?Command\Command $command,
-    int $exitCode,
   ) {
     parent::__construct($input, $output, $command);
+  }
 
-    $this->exitCode = $exitCode;
+  public function getException(): \Exception {
+    return $this->exception;
   }
 
   public function setExitCode(int $exitCode): void {
     $this->exitCode = $exitCode;
+
+    $r = new \ReflectionProperty($this->exception, 'code');
+    $r->setAccessible(true);
+    $r->setValue($this->exception, $this->exitCode);
   }
 
-  public function getExitCode(): int {
+  public function getExitCode(): ?int {
     return $this->exitCode;
   }
 }

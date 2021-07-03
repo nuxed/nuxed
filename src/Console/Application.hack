@@ -395,7 +395,7 @@ class Application {
         $command = $this->find($command_name);
         $exitCode = await $this->runCommand($input, $output, $command);
       }
-    } catch (\Throwable $exception) {
+    } catch (\Exception $exception) {
       if (!$catch) {
         throw $exception;
       }
@@ -403,8 +403,8 @@ class Application {
       $exitCode = null;
       if ($this->dispatcher is nonnull) {
         $dispatcher = $this->dispatcher;
-        $event = await $dispatcher->dispatch<Event\ErrorEvent>(
-          new Event\ErrorEvent($input, $output, $exception, $command),
+        $event = await $dispatcher->dispatch<Event\ExceptionEvent>(
+          new Event\ExceptionEvent($input, $output, $exception, $command),
         );
 
         $exitCode = $event->getExitCode();
@@ -451,8 +451,9 @@ class Application {
       return await $command->run();
     }
 
-    $event = await $dispatcher->dispatch<Event\CommandEvent>(
-      new Event\CommandEvent($input, $output, $command),
+    // Dispatch the `BeforeExecuteEvent` event to all registered listeners.
+    $event = await $dispatcher->dispatch<Event\BeforeExecuteEvent>(
+      new Event\BeforeExecuteEvent($input, $output, $command),
     );
 
     if ($event->commandShouldRun()) {
@@ -534,8 +535,9 @@ class Application {
   ): Awaitable<int> {
     if ($this->dispatcher is nonnull) {
       $dispatcher = $this->dispatcher;
-      $event = await $dispatcher->dispatch<Event\TerminateEvent>(
-        new Event\TerminateEvent($input, $output, $command, $exitCode),
+      // Dispatch the `AfterExecuteEvent` event to all registered listeners.
+      $event = await $dispatcher->dispatch<Event\AfterExecuteEvent>(
+        new Event\AfterExecuteEvent($input, $output, $command, $exitCode),
       );
 
       $exitCode = $event->getExitCode();

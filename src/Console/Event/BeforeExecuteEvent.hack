@@ -12,7 +12,7 @@ namespace Nuxed\Console\Event;
 /**
  * Allows to do things before the command is executed, like skipping the command or changing the input.
  */
-final class CommandEvent extends Event {
+final class BeforeExecuteEvent extends Event {
 
   /**
    * Indicates if the command should be run or skipped.

@@ -15,7 +15,12 @@ use namespace Nuxed\EventDispatcher\Event;
 /**
  * Allows to inspect input and output of a command.
  */
-class Event implements Event\IEvent {
+<<__Sealed(
+  AfterExecuteEvent::class,
+  BeforeExecuteEvent::class,
+  ExceptionEvent::class,
+)>>
+abstract class Event implements Event\IEvent {
   public function __construct(
     protected Input\IInput $input,
     protected Output\IOutput $output,
