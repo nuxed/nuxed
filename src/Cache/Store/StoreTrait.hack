@@ -20,7 +20,7 @@ trait StoreTrait {
   <<__Memoize>>
   protected function getId(
     string $key,
-    string $namespace,
+    string $namespace = '',
     ?int $max_id_length = null,
   ): string {
     if (C\contains_key($this->ids, $key)) {

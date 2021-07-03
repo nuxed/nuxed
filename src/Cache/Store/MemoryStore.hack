@@ -9,16 +9,15 @@
 
 namespace Nuxed\Cache\Store;
 
-use namespace HH\Lib\Str;
+use namespace HH\Lib\{C, Str};
 use namespace Nuxed\Cache\Exception;
 
-final class ApcStore implements IStore {
+final class MemoryStore implements IStore {
   use StoreTrait;
 
-  public function __construct(
-    private string $namespace = '',
-    private int $defaultTtl = 0,
-  ) {}
+  private dict<string, (int, mixed)> $data = dict[];
+
+  public function __construct(private int $defaultTtl = 0) {}
 
   /**
    * Persists data in the cache, uniquely referenced by a key with an optional expiration TTL time.
@@ -28,21 +27,30 @@ final class ApcStore implements IStore {
     T $value,
     ?int $ttl = null,
   ): Awaitable<bool> {
-    $id = $this->getId($id, $this->namespace);
+    $id = $this->getId($id);
     $ttl = $ttl ?? $this->defaultTtl;
 
-    if (null === $value) {
-      return false;
-    }
+    $this->data[$id] = tuple(\time() + $ttl, $value);
 
-    return \apc_store($id, $value, $ttl);
+    return true;
   }
 
   /**
    * Determines whether an item is present in the cache.
    */
   public async function contains(string $id): Awaitable<bool> {
-    return \apc_exists($this->getId($id, $this->namespace));
+    $id = $this->getId($id);
+    if (!C\contains_key($this->data, $id)) {
+      return false;
+    }
+
+    list($expiration_time, $value) = $this->data[$id];
+    if ($expiration_time > \time()) {
+      return true;
+    }
+
+    unset($this->data[$id]);
+    return false;
   }
 
   /**
@@ -53,7 +61,9 @@ final class ApcStore implements IStore {
       return false;
     }
 
-    return \apc_delete($this->getId($id, $this->namespace));
+    unset($this->data[$this->getId($id)]);
+
+    return true;
   }
 
   /**
@@ -68,33 +78,17 @@ final class ApcStore implements IStore {
       );
     }
 
-    $success = false;
-    $result = \apc_fetch($this->getId($id, $this->namespace), inout $success);
-    if (!$success) {
-      throw new Exception\RuntimeException(
-        Str\format('Error fetching item "%s" from APC.', $id),
-      );
-    }
+    list($_ttl, $value) = $this->data[$this->getId($id)];
 
-    return $result as T;
+    return $value as T;
   }
 
   /**
    * Wipes clean the entire cache's keys.
    */
   public async function clear(): Awaitable<bool> {
-    if (Str\is_empty($this->namespace)) {
-      return \apc_clear_cache();
-    }
+    $this->data = dict[];
 
-    /* HH_IGNORE_ERROR[2049] */
-    $iterator = new \APCIterator(
-      Str\format('/^%s/', \preg_quote($this->namespace, '/')),
-      /* HH_IGNORE_ERROR[2049] */
-      /* HH_IGNORE_ERROR[4106] */
-      \APC_ITER_KEY,
-    );
-
-    return \apc_delete($iterator);
+    return true;
   }
 }
