@@ -15,8 +15,10 @@ jobs:
         dependencies: ['highest', 'locked']
         experimental: [false]
 
-        # include:
-        #   - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'locked', experimental: true, composer-options: '--ignore-platform-req hhvm' }
+        include:
+          # - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'locked', experimental: true, composer-options: '--ignore-platform-req hhvm' }
+          - { os: 'ubuntu-latest', hhvm: '4.112', dependencies: 'locked', experimental: true, composer-options: '--ignore-platform-req hhvm' }
+          - { os: 'ubuntu-latest', hhvm: '4.111', dependencies: 'locked', experimental: true, composer-options: '--ignore-platform-req hhvm' }
 
     services:
       httpbin:

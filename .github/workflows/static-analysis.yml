@@ -15,8 +15,8 @@ jobs:
         dependencies: ['highest', 'locked']
         experimental: [false]
 
-        include:
-          - { hhvm: 'nightly', os: 'ubuntu-latest', dependencies: 'highest', composer-options: '--ignore-platform-req hhvm', experimental: true }
+        # include:
+        #   - { hhvm: 'nightly', os: 'ubuntu-latest', dependencies: 'highest', composer-options: '--ignore-platform-req hhvm', experimental: true }
 
     steps:
       - name: "checkout"
