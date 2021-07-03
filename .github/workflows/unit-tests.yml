@@ -16,12 +16,13 @@ jobs:
         experimental: [false]
 
         include:
-          - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'highest', experimental: true, composer-options: '--ignore-platform-req hhvm' }
+          - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'locked', experimental: true, composer-options: '--ignore-platform-req hhvm' }
 
     services:
-      image: kennethreitz/httpbin
-      ports:
-        - 8080:80
+      httpbin:
+        image: kennethreitz/httpbin
+        ports:
+          - 8080:80
 
     steps:
       - name: "checkout"
