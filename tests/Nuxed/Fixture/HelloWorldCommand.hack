@@ -26,7 +26,7 @@ final class HelloWorldCommand extends Command\Command {
    */
   <<__Override>>
   public async function run(): Awaitable<int> {
-    await $this->output->writeln('Hello, World!');
+    await $this->output->writeLine('Hello, World!');
 
     return 0;
   }

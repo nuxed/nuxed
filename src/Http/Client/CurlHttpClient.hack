@@ -65,13 +65,10 @@ final class CurlHttpClient extends HttpClient {
       }
 
       $curlOptions[\CURLOPT_UNIX_SOCKET_PATH] = $options['unix_socket'];
-      $tcp_connection = false;
     } else {
       $curlOptions[\CURLOPT_TCP_NODELAY] = true;
       $curlOptions[\CURLOPT_PROXY] = $options['proxy'] ?? null;
       $curlOptions[\CURLOPT_NOPROXY] = $options['no_proxy'] ?? '';
-
-      $tcp_connection = true;
     }
 
     $protocolVersion = (float)$request->getProtocolVersion();
@@ -177,12 +174,13 @@ final class CurlHttpClient extends HttpClient {
     }
 
     $result = await Asio\curl_exec($ch);
-    $error = \curl_error($ch);
+    $error = \curl_error($ch) as string;
     if ($error !== '') {
-      throw new Exception\NetworkException($error);
+      throw new Exception\NetworkException($request, $error);
     }
 
     $debug_information = \curl_getinfo($ch);
+    \curl_close($ch);
     if ($options['debug'] ?? false) {
       $headers = dict[
         'X-Nuxed-Debug' => vec[
@@ -269,7 +267,6 @@ final class CurlHttpClient extends HttpClient {
 
     $size = (int)$debug_information['header_size'];
     $content = Str\slice($result, $size);
-    \curl_close($ch);
 
     $body = Message\Body\memory();
     await $body->writeAllAsync(Str\slice($result, $size));

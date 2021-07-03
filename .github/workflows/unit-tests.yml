@@ -19,6 +19,11 @@ jobs:
           - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'lowest' , experimental: true, composer-options: '--ignore-platform-req hhvm' }
           - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'highest', experimental: true, composer-options: '--ignore-platform-req hhvm' }
 
+    services:
+      image: kennethreitz/httpbin
+      ports:
+        - 8080:80
+
     steps:
       - name: "checkout"
         uses: "actions/checkout@v2"
@@ -39,4 +44,6 @@ jobs:
 
       - name: "running unit tests"
         continue-on-error: ${{ matrix.experimental }}
+        env:
+          HTTPBIN_BASE_URI: "http://localhost:8080/"
         run: "hhvm vendor/bin/hacktest tests"

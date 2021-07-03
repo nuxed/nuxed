@@ -20,6 +20,14 @@ final class HttpbinTest extends HackTest\HackTest {
   const type ExpectedHeaders = dict<string, vec<string>>;
   const type ResponseInspector = (function(Message\IResponse): Awaitable<void>);
 
+  const type testRequestArguments = (
+    Message\IRequest,
+    Client\HttpClientOptions,
+    this::ExpectedStatusCode,
+    this::ExpectedHeaders,
+    ?this::ResponseInspector,
+  );
+
   <<HackTest\DataProvider('getRequests')>>
   public async function testRequest(
     Message\IRequest $request,
@@ -28,15 +36,19 @@ final class HttpbinTest extends HackTest\HackTest {
     this::ExpectedHeaders $expected_headers,
     ?this::ResponseInspector $inspector = null,
   ): Awaitable<void> {
-    $httpbin = Environment\get('HTTPBIN_BASE_URI', 'https://httpbin.org')
-      as string;
+    $httpbin = Environment\get('HTTPBIN_BASE_URI');
+    if (null === $httpbin) {
+      static::markTestSkipped('HTTPBIN_BASE_URI is not set.');
+    }
 
     $client = Client\HttpClient::create(shape(
       'base_uri' => $httpbin,
     ));
 
     $response = await $client->send($request, $options);
+
     expect($response->getStatusCode())->toBeSame($expected_status_code);
+
     foreach ($expected_headers as $header => $values) {
       foreach ($values as $value) {
         expect($response->getHeader($header))->toContain($value);
@@ -48,14 +60,7 @@ final class HttpbinTest extends HackTest\HackTest {
     }
   }
 
-  public function getRequests(): dict<string, (
-    Message\IRequest,
-    Client\HttpClientOptions,
-    this::ExpectedStatusCode,
-    this::ExpectedHeaders,
-    ?this::ResponseInspector,
-  )> {
-
+  public function getRequests(): dict<string, this::testRequestArguments> {
     $requests = dict[];
 
     // Http Methods
