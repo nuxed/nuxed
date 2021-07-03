@@ -16,7 +16,6 @@ jobs:
         experimental: [false]
 
         include:
-          - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'lowest' , experimental: true, composer-options: '--ignore-platform-req hhvm' }
           - { os: 'ubuntu-latest', hhvm: 'nightly', dependencies: 'highest', experimental: true, composer-options: '--ignore-platform-req hhvm' }
 
     services:
