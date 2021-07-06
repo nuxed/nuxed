@@ -38,7 +38,10 @@ type HttpClientOptions = shape(
   // a comma separated list of hosts that do not require a proxy to be reached
   ?'no_proxy' => string,
 
-  // the inactivity timeout - defaults to 60
+  // the inactivity timeout - defaults to 30
+  ?'connect_timeout' => float,
+
+  // the total timeout - defaults to 60
   ?'timeout' => float,
 
   // the maximum execution time for the request+response as a whole;

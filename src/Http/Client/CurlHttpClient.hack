@@ -26,6 +26,7 @@ final class CurlHttpClient extends HttpClient {
   ): Awaitable<Message\IResponse> {
     $uri = $request->getUri();
 
+    $connect_timeout = $options['connect_timeout'] ?? 30.0;
     $timeout = $options['timeout'] ?? 60.0;
     $ciphers = $options['ciphers'] ?? null;
     if ($ciphers is nonnull) {
@@ -43,7 +44,8 @@ final class CurlHttpClient extends HttpClient {
       \CURLOPT_HEADER => true,
       \CURLOPT_MAXREDIRS => Math\max(vec[0, $options['max_redirects'] ?? 0]),
       \CURLOPT_COOKIEFILE => '', // Keep track of cookies during redirects
-      \CURLOPT_CONNECTTIMEOUT_MS => 1000 * $timeout,
+      \CURLOPT_CONNECTTIMEOUT_MS => 1000 * $connect_timeout,
+      \CURLOPT_TIMEOUT_MS => 1000 * $timeout,
       \CURLOPT_HEADEROPT => \CURLHEADER_SEPARATE,
       \CURLOPT_SSL_VERIFYPEER => $options['verify_peer'] ?? true,
       \CURLOPT_SSL_VERIFYHOST => ($options['verify_host'] ?? true) ? 2 : 0,
@@ -91,7 +93,7 @@ final class CurlHttpClient extends HttpClient {
       $curlOptions[\CURLOPT_CUSTOMREQUEST] = (string)$method;
     }
 
-    if ($timeout < 1) {
+    if ($connect_timeout < 1) {
       $curlOptions[\CURLOPT_NOSIGNAL] = true;
     }
 

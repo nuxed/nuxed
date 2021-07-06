@@ -18,6 +18,7 @@ interface IHttpClient {
     'verify_peer' => true,
     'verify_host' => true,
     'capture_peer_cert_chain' => false,
+    'connect_timeout' => 30.0,
     'timeout' => 60.0,
     'debug' => false,
   );
