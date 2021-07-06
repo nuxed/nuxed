@@ -152,14 +152,8 @@ final class Application
         if ($event->hasResponse()) {
           $response = $event->getResponse();
         } else {
-          if (Environment\mode() === Environment\Mode::DEVELOPMENT) {
+          // TODO(azjezz): we should log this.
             throw $e;
-          }
-
-          $response = Message\Response\text(
-            'Internal Server Error.',
-            Message\StatusCode::INTERNAL_SERVER_ERROR,
-          );
         }
       }
     } else {
